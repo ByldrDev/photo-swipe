@@ -1,0 +1,535 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1BBB0D70412A5C1396DB8A00 /* PhotoSwipeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD4BFCFA42E704998845D5E /* PhotoSwipeApp.swift */; };
+		1CF52CD671085689A678DA43 /* PhotoSwipeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BB98F4D306E1E291D5AB55C /* PhotoSwipeUITests.swift */; };
+		F3F466351A74B7DF9966B9F7 /* PlaceholderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E269D33A2311336E018101D1 /* PlaceholderTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4546C51DFBC3B39D10ACB371 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3DD724C54FDA23DFE126177A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 24F5DFBDA8E50776AC53BBB1;
+			remoteInfo = PhotoSwipe;
+		};
+		8E91A18FB830D994CC0690E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3DD724C54FDA23DFE126177A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 24F5DFBDA8E50776AC53BBB1;
+			remoteInfo = PhotoSwipe;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		03AB91CD9F66CD48272AEF3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1BE01F83ED0C1A08D871DF54 /* PhotoSwipeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PhotoSwipeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2981107A74443087108E74FA /* PhotoSwipe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PhotoSwipe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DD4BFCFA42E704998845D5E /* PhotoSwipeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSwipeApp.swift; sourceTree = "<group>"; };
+		6BB98F4D306E1E291D5AB55C /* PhotoSwipeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSwipeUITests.swift; sourceTree = "<group>"; };
+		880E8A73FCAA89BB0F0784C3 /* PhotoSwipeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PhotoSwipeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E269D33A2311336E018101D1 /* PlaceholderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		00642D981975E754B3559990 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		022DDA5F326FC76D896A6429 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				4DD4BFCFA42E704998845D5E /* PhotoSwipeApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		76BBF63374BA9031FECB536B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				03AB91CD9F66CD48272AEF3F /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		9B925B1AEDACC90072F64FBC /* PhotoSwipe */ = {
+			isa = PBXGroup;
+			children = (
+				022DDA5F326FC76D896A6429 /* App */,
+				B1182CEF30E7DB3E3E9E1E60 /* Models */,
+				76BBF63374BA9031FECB536B /* Resources */,
+				E79EAACDAEB716487F29CC79 /* Services */,
+				00642D981975E754B3559990 /* Views */,
+			);
+			path = PhotoSwipe;
+			sourceTree = "<group>";
+		};
+		AD84336B9B40C589EAEBC35F = {
+			isa = PBXGroup;
+			children = (
+				9B925B1AEDACC90072F64FBC /* PhotoSwipe */,
+				CD1D75C70F2B2119149B50C9 /* PhotoSwipeTests */,
+				F0FCDECE3AE15E58A5668991 /* PhotoSwipeUITests */,
+				EA90F5E966AD4112BE5588AD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B1182CEF30E7DB3E3E9E1E60 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CD1D75C70F2B2119149B50C9 /* PhotoSwipeTests */ = {
+			isa = PBXGroup;
+			children = (
+				E269D33A2311336E018101D1 /* PlaceholderTests.swift */,
+			);
+			path = PhotoSwipeTests;
+			sourceTree = "<group>";
+		};
+		E79EAACDAEB716487F29CC79 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		EA90F5E966AD4112BE5588AD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2981107A74443087108E74FA /* PhotoSwipe.app */,
+				1BE01F83ED0C1A08D871DF54 /* PhotoSwipeTests.xctest */,
+				880E8A73FCAA89BB0F0784C3 /* PhotoSwipeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F0FCDECE3AE15E58A5668991 /* PhotoSwipeUITests */ = {
+			isa = PBXGroup;
+			children = (
+				6BB98F4D306E1E291D5AB55C /* PhotoSwipeUITests.swift */,
+			);
+			path = PhotoSwipeUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		24F5DFBDA8E50776AC53BBB1 /* PhotoSwipe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAE6EA967A0E00DA59481ED3 /* Build configuration list for PBXNativeTarget "PhotoSwipe" */;
+			buildPhases = (
+				B8C7496907E27492C0218F73 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PhotoSwipe;
+			packageProductDependencies = (
+			);
+			productName = PhotoSwipe;
+			productReference = 2981107A74443087108E74FA /* PhotoSwipe.app */;
+			productType = "com.apple.product-type.application";
+		};
+		49F24E38B5D2641C3DF5C9D6 /* PhotoSwipeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7404CDE708A79BA75F9AB3F /* Build configuration list for PBXNativeTarget "PhotoSwipeTests" */;
+			buildPhases = (
+				5C80610B6BE5C68C79FB37B7 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7E16FE72E0524E80AA1E6646 /* PBXTargetDependency */,
+			);
+			name = PhotoSwipeTests;
+			packageProductDependencies = (
+			);
+			productName = PhotoSwipeTests;
+			productReference = 1BE01F83ED0C1A08D871DF54 /* PhotoSwipeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AEC3796CAA4B6625A276F054 /* PhotoSwipeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C479CF74D1A644677136444 /* Build configuration list for PBXNativeTarget "PhotoSwipeUITests" */;
+			buildPhases = (
+				29B08C8B63EDE4CD76795B1D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E5EDA36A681398D336763D35 /* PBXTargetDependency */,
+			);
+			name = PhotoSwipeUITests;
+			packageProductDependencies = (
+			);
+			productName = PhotoSwipeUITests;
+			productReference = 880E8A73FCAA89BB0F0784C3 /* PhotoSwipeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3DD724C54FDA23DFE126177A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					24F5DFBDA8E50776AC53BBB1 = {
+						DevelopmentTeam = ZFLMF363GG;
+						ProvisioningStyle = Automatic;
+					};
+					49F24E38B5D2641C3DF5C9D6 = {
+						DevelopmentTeam = ZFLMF363GG;
+						ProvisioningStyle = Automatic;
+					};
+					AEC3796CAA4B6625A276F054 = {
+						DevelopmentTeam = ZFLMF363GG;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 24F5DFBDA8E50776AC53BBB1;
+					};
+				};
+			};
+			buildConfigurationList = 3D20D20FDA0D886C06A38B5F /* Build configuration list for PBXProject "PhotoSwipe" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = AD84336B9B40C589EAEBC35F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EA90F5E966AD4112BE5588AD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				24F5DFBDA8E50776AC53BBB1 /* PhotoSwipe */,
+				49F24E38B5D2641C3DF5C9D6 /* PhotoSwipeTests */,
+				AEC3796CAA4B6625A276F054 /* PhotoSwipeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		29B08C8B63EDE4CD76795B1D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CF52CD671085689A678DA43 /* PhotoSwipeUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5C80610B6BE5C68C79FB37B7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3F466351A74B7DF9966B9F7 /* PlaceholderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B8C7496907E27492C0218F73 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1BBB0D70412A5C1396DB8A00 /* PhotoSwipeApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7E16FE72E0524E80AA1E6646 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 24F5DFBDA8E50776AC53BBB1 /* PhotoSwipe */;
+			targetProxy = 8E91A18FB830D994CC0690E8 /* PBXContainerItemProxy */;
+		};
+		E5EDA36A681398D336763D35 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 24F5DFBDA8E50776AC53BBB1 /* PhotoSwipe */;
+			targetProxy = 4546C51DFBC3B39D10ACB371 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		062D6011FA819017CB089EB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = PhotoSwipe/Resources/Info.plist;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryancwynar.PhotoSwipe;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		0DC48ECB14BE0B8C677ED56F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryancwynar.PhotoSwipeUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PhotoSwipe;
+			};
+			name = Debug;
+		};
+		5E684ECF2008E30B5C5268AC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = PhotoSwipe/Resources/Info.plist;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryancwynar.PhotoSwipe;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		6E2C3A8A34ABEF2A02E91660 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryancwynar.PhotoSwipeTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoSwipe.app/PhotoSwipe";
+			};
+			name = Debug;
+		};
+		75DF3A85C2EBD833794D0D00 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = ZFLMF363GG;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		78796955BC6C99D6E4C6D147 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryancwynar.PhotoSwipeUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = PhotoSwipe;
+			};
+			name = Release;
+		};
+		D7E30301FBF37DBCE1997861 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZFLMF363GG;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		EC7C75C27F06FE4A77B1D175 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ryancwynar.PhotoSwipeTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhotoSwipe.app/PhotoSwipe";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3C479CF74D1A644677136444 /* Build configuration list for PBXNativeTarget "PhotoSwipeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0DC48ECB14BE0B8C677ED56F /* Debug */,
+				78796955BC6C99D6E4C6D147 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3D20D20FDA0D886C06A38B5F /* Build configuration list for PBXProject "PhotoSwipe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7E30301FBF37DBCE1997861 /* Debug */,
+				75DF3A85C2EBD833794D0D00 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F7404CDE708A79BA75F9AB3F /* Build configuration list for PBXNativeTarget "PhotoSwipeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E2C3A8A34ABEF2A02E91660 /* Debug */,
+				EC7C75C27F06FE4A77B1D175 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FAE6EA967A0E00DA59481ED3 /* Build configuration list for PBXNativeTarget "PhotoSwipe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E684ECF2008E30B5C5268AC /* Debug */,
+				062D6011FA819017CB089EB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3DD724C54FDA23DFE126177A /* Project object */;
+}

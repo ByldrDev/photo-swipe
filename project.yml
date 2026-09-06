@@ -1,0 +1,71 @@
+name: PhotoSwipe
+options:
+  bundleIdPrefix: com.ryancwynar
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: ZFLMF363GG
+    CODE_SIGN_STYLE: Automatic
+targets:
+  PhotoSwipe:
+    type: application
+    platform: iOS
+    sources:
+      - PhotoSwipe
+    info:
+      path: PhotoSwipe/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: PhotoSwipe
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UIRequiresFullScreen: true
+        NSPhotoLibraryUsageDescription: "PhotoSwipe shows your photos so you can decide which to keep, delete, or hide. Deletions and hiding only happen after you confirm them on the Review screen."
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ryancwynar.PhotoSwipe
+        TARGETED_DEVICE_FAMILY: "1"
+        INFOPLIST_KEY_UIUserInterfaceStyle: Dark
+        ENABLE_PREVIEWS: YES
+  PhotoSwipeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - PhotoSwipeTests
+    dependencies:
+      - target: PhotoSwipe
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ryancwynar.PhotoSwipeTests
+  PhotoSwipeUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - PhotoSwipeUITests
+    dependencies:
+      - target: PhotoSwipe
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ryancwynar.PhotoSwipeUITests
+        TEST_TARGET_NAME: PhotoSwipe
+schemes:
+  PhotoSwipe:
+    build:
+      targets:
+        PhotoSwipe: all
+        PhotoSwipeTests: [test]
+        PhotoSwipeUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: false
+      targets:
+        - PhotoSwipeTests
+        - PhotoSwipeUITests
