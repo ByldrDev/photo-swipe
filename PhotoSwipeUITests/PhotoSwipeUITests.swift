@@ -185,6 +185,31 @@ final class PhotoSwipeUITests: XCTestCase {
                        "library count should drop from \(before) to \(before - 2), was \(count.label)")
     }
 
+    /// Requires a video in the simulator library (seeded with `simctl addmedia clip.mp4`).
+    /// Walks the deck until a video card shows up, then checks the inline player and mute toggle.
+    func testVideoCardPlaysInline() {
+        app.buttons["startButton"].tap()
+        XCTAssertTrue(app.buttons["keepButton"].waitForExistence(timeout: 5))
+        var found = false
+        for _ in 0..<25 {
+            if app.buttons["muteButton"].waitForExistence(timeout: 1) { found = true; break }
+            if app.staticTexts["finishedSummary"].exists { break }
+            app.buttons["keepButton"].tap()
+        }
+        XCTAssertTrue(found, "expected a video card with a mute button somewhere in the first 25 assets")
+        XCTAssertTrue(app.otherElements["videoPlayer"].waitForExistence(timeout: 10), "player layer should appear once the item is ready")
+        XCTAssertEqual(app.buttons["muteButton"].label, "Unmute", "videos start muted")
+        app.buttons["muteButton"].tap()
+        XCTAssertEqual(app.buttons["muteButton"].label, "Mute")
+        saveScreenshot("video-card")
+        // Swiping still works over the video.
+        let before = progress
+        let wasLast = !app.buttons["muteButton"].exists ? false : true
+        app.otherElements["swipeCard"].firstMatch.swipeRight()
+        let advanced = progress != before || app.staticTexts["finishedSummary"].waitForExistence(timeout: 2)
+        XCTAssertTrue(advanced, "swipe over the video should advance or finish the session (wasLast=\(wasLast))")
+    }
+
     private func waitForProgress(prefix: String, timeout: TimeInterval = 3) -> Bool {
         let label = app.staticTexts["progressLabel"]
         let predicate = NSPredicate(format: "label BEGINSWITH %@", prefix)

@@ -54,15 +54,15 @@ struct SwipeView: View {
                 .ignoresSafeArea()
         }
 
-        AssetImageView(assetID: currentID, targetSize: size)
+        AssetMediaView(assetID: currentID, targetSize: size)
             .frame(width: size.width, height: size.height)
             .ignoresSafeArea()
             .overlay(decisionOverlay)
             .offset(offset)
             .rotationEffect(.degrees(Double(offset.width / size.width) * 12), anchor: .bottom)
             .gesture(dragGesture(size: size))
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("swipeCard")
-            .accessibilityLabel("Photo \(session.position) of \(session.totalCount)")
             .id(currentID)
     }
 

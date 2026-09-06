@@ -16,6 +16,9 @@ everything queued, lets you rescue anything with a tap, and commits all changes 
 batch. iOS asks you to confirm once for hides and once for deletes; deleted photos land
 in Recently Deleted for 30 days.
 
+Videos play inline on the card: they autoplay muted and loop, with a speaker button to
+unmute, and swipes work over the playing video.
+
 Start from your newest photo by default, flip to oldest-first, or use **Choose where to
 start…** to jump to any month or date. Sessions are saved after every swipe, so quitting
 the app never loses your delete list; Home offers **Resume** on the next launch.
@@ -34,8 +37,9 @@ the app never loses your delete list; Home offers **Resume** on the next launch.
 PhotoSwipe/
   App/          PhotoSwipeApp (entry), AppModel (wires session ↔ PhotoKit ↔ disk)
   Models/       SwipeSession — pure, testable engine: cursor, direction, decision log, undo
-  Services/     PhotoLibraryService (PhotoKit), AssetImageLoader, SessionStore (JSON)
-  Views/        HomeView, StartPickerView, SwipeView, ReviewView, AssetImageView, Theme
+  Services/     PhotoLibraryService (PhotoKit), AssetImageLoader, AssetVideoPlayer, SessionStore
+  Views/        HomeView, StartPickerView, SwipeView, ReviewView, AssetMediaView (image or
+                inline video), AssetImageView, PlayerLayerView, Theme
 PhotoSwipeTests/     unit tests for SwipeSession and SessionStore
 PhotoSwipeUITests/   XCUITests that drive real swipes against the simulator library
 ```
@@ -70,6 +74,7 @@ xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipe \
   read-write access on recent iOS simulators. The UI tests therefore tap the real
   "Allow Full Access" alert on first launch. To re-trigger it:
   `xcrun simctl privacy booted reset photos com.ryancwynar.PhotoSwipe`
+- Seed a test clip for the video test: `ffmpeg -f lavfi -i testsrc2=size=720x1280:rate=30:duration=4 -f lavfi -i sine=frequency=440:duration=4 -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest clip.mp4 && xcrun simctl addmedia booted clip.mp4`
 - The commit test mutates the simulator library (that is the point). Re-seed with
   `addmedia` if it runs low.
 
@@ -80,8 +85,7 @@ Open `PhotoSwipe.xcodeproj`, pick your iPhone, run. Signing is automatic with te
 
 ## Not in v1
 
-Inline video playback (videos show a poster frame with a duration badge), duplicate
-detection, per-album filtering, and richer iCloud "not downloaded" placeholders.
+Duplicate detection, per-album filtering, and richer iCloud "not downloaded" placeholders.
 
 ## TestFlight
 

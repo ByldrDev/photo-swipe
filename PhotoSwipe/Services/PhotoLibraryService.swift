@@ -1,5 +1,6 @@
 import Foundation
 import Photos
+import AVFoundation
 import UIKit
 import Observation
 
@@ -135,6 +136,25 @@ final class PhotoLibraryService: NSObject {
             DispatchQueue.main.async { handler(image, degraded) }
         }
     }
+
+    /// Requests a playable item for a video asset (streams from iCloud if needed).
+    @discardableResult
+    func requestPlayerItem(for id: String, handler: @escaping (AVPlayerItem?) -> Void) -> PHImageRequestID? {
+        guard let asset = assetsByID[id], asset.mediaType == .video else {
+            handler(nil)
+            return nil
+        }
+        let options = PHVideoRequestOptions()
+        options.deliveryMode = .automatic
+        options.isNetworkAccessAllowed = true
+        return imageManager.requestPlayerItem(forVideo: asset, options: options) { item, info in
+            let cancelled = (info?[PHImageCancelledKey] as? Bool) ?? false
+            if cancelled { return }
+            DispatchQueue.main.async { handler(item) }
+        }
+    }
+
+    func isVideo(_ id: String) -> Bool { assetsByID[id]?.mediaType == .video }
 
     func cancelImageRequest(_ requestID: PHImageRequestID?) {
         guard let requestID else { return }
