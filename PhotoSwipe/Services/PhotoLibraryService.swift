@@ -137,20 +137,31 @@ final class PhotoLibraryService: NSObject {
         }
     }
 
-    /// Requests a playable item for a video asset (streams from iCloud if needed).
+    /// Requests a playable item for a video asset, streaming from iCloud if
+    /// needed. `progress` reports download progress (0...1) on the main thread.
     @discardableResult
-    func requestPlayerItem(for id: String, handler: @escaping (AVPlayerItem?) -> Void) -> PHImageRequestID? {
+    func requestPlayerItem(for id: String,
+                           version: PHVideoRequestOptionsVersion = .current,
+                           progress: ((Double) -> Void)? = nil,
+                           handler: @escaping (AVPlayerItem?, Error?) -> Void) -> PHImageRequestID? {
         guard let asset = assetsByID[id], asset.mediaType == .video else {
-            handler(nil)
+            handler(nil, nil)
             return nil
         }
         let options = PHVideoRequestOptions()
         options.deliveryMode = .automatic
         options.isNetworkAccessAllowed = true
+        options.version = version
+        if let progress {
+            options.progressHandler = { fraction, _, _, _ in
+                DispatchQueue.main.async { progress(fraction) }
+            }
+        }
         return imageManager.requestPlayerItem(forVideo: asset, options: options) { item, info in
             let cancelled = (info?[PHImageCancelledKey] as? Bool) ?? false
             if cancelled { return }
-            DispatchQueue.main.async { handler(item) }
+            let error = info?[PHImageErrorKey] as? Error
+            DispatchQueue.main.async { handler(item, error) }
         }
     }
 

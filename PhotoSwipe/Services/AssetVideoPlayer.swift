@@ -8,8 +8,16 @@ import Observation
 @MainActor
 @Observable
 final class AssetVideoPlayer {
+    enum State: Equatable {
+        case idle
+        case loading(progress: Double?)   // nil = local, waiting for PhotoKit
+        case ready
+        case failed(String)
+    }
+
     let player = AVPlayer()
-    private(set) var isReady = false
+    private(set) var state: State = .idle
+    var isReady: Bool { state == .ready }
     var isMuted = true {
         didSet {
             player.isMuted = isMuted
@@ -20,6 +28,7 @@ final class AssetVideoPlayer {
 
     @ObservationIgnored private var requestID: PHImageRequestID?
     @ObservationIgnored private var loopObserver: NSObjectProtocol?
+    @ObservationIgnored private var statusObserver: NSKeyValueObservation?
     @ObservationIgnored private let library: PhotoLibraryService
 
     init(library: PhotoLibraryService) {
@@ -33,10 +42,42 @@ final class AssetVideoPlayer {
         guard id != loadedID else { return }
         stop()
         loadedID = id
-        requestID = library.requestPlayerItem(for: id) { [weak self] item in
-            guard let self, self.loadedID == id, let item else { return }
-            self.attach(item)
+        request(id: id, version: .current)
+    }
+
+    func retry() {
+        guard let id = loadedID else { return }
+        loadedID = nil
+        load(id: id)
+    }
+
+    /// Asks PhotoKit for a player item. Edited/trimmed clips occasionally fail
+    /// to render their `.current` version; when that happens we retry with the
+    /// `.original` bytes before giving up.
+    private func request(id: String, version: PHVideoRequestOptionsVersion) {
+        state = .loading(progress: nil)
+        requestID = library.requestPlayerItem(for: id, version: version, progress: { [weak self] fraction in
+            guard let self, self.loadedID == id else { return }
+            if case .ready = self.state { return }
+            self.state = .loading(progress: fraction)
+        }) { [weak self] item, error in
+            guard let self, self.loadedID == id else { return }
+            if let item {
+                self.attach(item)
+            } else if version == .current {
+                self.request(id: id, version: .original)
+            } else {
+                self.state = .failed(Self.describe(error))
+            }
         }
+    }
+
+    private static func describe(_ error: Error?) -> String {
+        guard let error = error as NSError? else { return "This video couldn't be loaded." }
+        if error.domain == NSURLErrorDomain || error.code == PHPhotosError.networkAccessRequired.rawValue {
+            return "Couldn't download this video from iCloud. Check your connection and try again."
+        }
+        return error.localizedDescription
     }
 
     private func attach(_ item: AVPlayerItem) {
@@ -50,7 +91,16 @@ final class AssetVideoPlayer {
                 self.player.play()
             }
         }
-        isReady = true
+        // Surface decode/streaming failures that happen after the item is handed over.
+        statusObserver = item.observe(\.status, options: [.new]) { [weak self] item, _ in
+            guard item.status == .failed else { return }
+            let message = item.error?.localizedDescription ?? "Playback failed."
+            Task { @MainActor in
+                guard let self, self.loadedID != nil else { return }
+                self.state = .failed(message)
+            }
+        }
+        state = .ready
         player.play()
     }
 
@@ -80,12 +130,12 @@ final class AssetVideoPlayer {
         requestID = nil
         if let loopObserver { NotificationCenter.default.removeObserver(loopObserver) }
         loopObserver = nil
+        statusObserver?.invalidate()
+        statusObserver = nil
         player.pause()
         player.replaceCurrentItem(with: nil)
-        isReady = false
+        state = .idle
         loadedID = nil
-        if !isMuted {
-            isMuted = true
-        }
+        if !isMuted { isMuted = true }
     }
 }
