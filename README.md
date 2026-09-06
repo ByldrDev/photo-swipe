@@ -85,15 +85,27 @@ detection, per-album filtering, and richer iCloud "not downloaded" placeholders.
 
 ## TestFlight
 
-`scripts/testflight.sh` archives a Release build and uploads it to App Store Connect using
-an App Store Connect API key (Team key, App Manager role):
+`scripts/testflight.sh` archives a Release build and uploads it to App Store Connect:
 
 ```sh
-ASC_KEY_ID=XXXXXXXXXX ASC_ISSUER_ID=<uuid> scripts/testflight.sh
+ASC_KEY_ID=2M8HBZGHA8 ASC_ISSUER_ID=7a62ff2d-f404-42b0-b11b-2a475a0c4ad3 scripts/testflight.sh
 ```
 
-The `.p8` is read from `~/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8` unless
-`ASC_KEY_PATH` says otherwise. Signing is automatic (team `B89YM4B72X`); Xcode creates the
-distribution certificate and App Store profile on first run. The build number defaults to a
-UTC timestamp so successive uploads never collide. `ITSAppUsesNonExemptEncryption` is set
-to false in the Info.plist, so builds skip the export-compliance prompt.
+Auth: an App Store Connect API key (Team key, App Manager role) read from
+`~/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8`; without `ASC_KEY_ID` the script falls
+back to the Apple ID signed in to Xcode. The build number defaults to a UTC timestamp so
+uploads never collide. `ITSAppUsesNonExemptEncryption` is false, so builds skip the
+export-compliance prompt.
+
+**Signing is manual for the upload step.** Xcode 26's automatic distribution signing asks
+Apple for a cloud-managed certificate (`DISTRIBUTION_MANAGED`), which this team's portal
+rejects with a 403. So the export uses a classic **Apple Distribution** certificate in the
+login keychain plus the **"PhotoSwipe App Store"** provisioning profile, both created by hand
+in Certificates, Identifiers & Profiles (CSR via `openssl req`, upload, download `.cer`,
+build a `.p12` with the key, `security import`; then an App Store profile for the bundle ID,
+downloaded into `~/Library/Developer/Xcode/UserData/Provisioning Profiles/`). Both expire
+2027-09-06. `scripts/ExportOptions.plist` names them. The archive step still uses automatic
+(development) signing, which works fine.
+
+App Store Connect record: "PhotoSwipe: Keep or Delete" (app id 6809222601; "PhotoSwipe" and
+"Photo Swipe" were taken). The name can be changed under App Information before release.
