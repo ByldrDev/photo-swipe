@@ -44,6 +44,11 @@ PhotoSwipeTests/     unit tests for SwipeSession and SessionStore
 PhotoSwipeUITests/   XCUITests that drive real swipes against the simulator library
 ```
 
+The deck keeps a sliding prefetch window warm: 20 assets ahead and 2 behind are decoded at
+screen size (and pulled from iCloud) via `PHCachingImageManager`, and released as they leave
+the window. The window size lives in `AppModel.prefetchAhead`. Cache hits only happen when
+the request size and options match, so live requests and the cache share one options factory.
+
 `SwipeSession` never imports Photos. `PhotoLibraryService` maps the library to an array of
 `localIdentifier`s (newest first) and the session walks that array; `direction` decides
 whether the cursor moves +1 or -1. Hidden assets are excluded from the fetch, so a photo

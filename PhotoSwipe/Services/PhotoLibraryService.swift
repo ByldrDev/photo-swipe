@@ -125,11 +125,7 @@ final class PhotoLibraryService: NSObject {
             handler(nil, false)
             return nil
         }
-        let options = PHImageRequestOptions()
-        options.deliveryMode = .opportunistic
-        options.isNetworkAccessAllowed = true
-        options.resizeMode = .fast
-        return imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: contentMode, options: options) { image, info in
+        return imageManager.requestImage(for: asset, targetSize: targetSize, contentMode: contentMode, options: Self.imageOptions()) { image, info in
             let degraded = (info?[PHImageResultIsDegradedKey] as? Bool) ?? false
             let cancelled = (info?[PHImageCancelledKey] as? Bool) ?? false
             if cancelled { return }
@@ -172,15 +168,43 @@ final class PhotoLibraryService: NSObject {
         imageManager.cancelImageRequest(requestID)
     }
 
-    /// Warms the cache for the assets the user is about to see.
-    func startCaching(ids: [String], targetSize: CGSize) {
-        let assets = assets(for: ids)
-        guard !assets.isEmpty else { return }
-        imageManager.startCachingImages(for: assets, targetSize: targetSize, contentMode: .aspectFit, options: nil)
+    /// Options shared by live requests and the prefetch cache. PHCachingImageManager
+    /// only serves a cached result when size, content mode and options all match.
+    private static func imageOptions() -> PHImageRequestOptions {
+        let options = PHImageRequestOptions()
+        options.deliveryMode = .opportunistic
+        options.isNetworkAccessAllowed = true
+        options.resizeMode = .fast
+        return options
+    }
+
+    @ObservationIgnored private var cachedWindow: Set<String> = []
+    @ObservationIgnored private var cachedTargetSize: CGSize = .zero
+
+    /// Keeps a sliding window of decoded, screen-sized images warm. Assets that
+    /// enter the window start decoding (and downloading from iCloud) immediately;
+    /// assets that leave it are released so memory stays bounded.
+    func updateCacheWindow(ids: [String], targetSize: CGSize) {
+        if targetSize != cachedTargetSize {
+            imageManager.stopCachingImagesForAllAssets()
+            cachedWindow = []
+            cachedTargetSize = targetSize
+        }
+        let wanted = Set(ids)
+        let toStart = assets(for: Array(wanted.subtracting(cachedWindow)))
+        let toStop = assets(for: Array(cachedWindow.subtracting(wanted)))
+        if !toStart.isEmpty {
+            imageManager.startCachingImages(for: toStart, targetSize: targetSize, contentMode: .aspectFit, options: Self.imageOptions())
+        }
+        if !toStop.isEmpty {
+            imageManager.stopCachingImages(for: toStop, targetSize: targetSize, contentMode: .aspectFit, options: Self.imageOptions())
+        }
+        cachedWindow = wanted
     }
 
     func stopCachingAll() {
         imageManager.stopCachingImagesForAllAssets()
+        cachedWindow = []
     }
 
     // MARK: - Commit
