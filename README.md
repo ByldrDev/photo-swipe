@@ -76,9 +76,24 @@ xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipe \
 ## Running on a device
 
 Open `PhotoSwipe.xcodeproj`, pick your iPhone, run. Signing is automatic with team
-`ZFLMF363GG` (edit `project.yml` / the target's Signing tab for a different team).
+`B89YM4B72X` (edit `project.yml` / the target's Signing tab for a different team).
 
 ## Not in v1
 
 Inline video playback (videos show a poster frame with a duration badge), duplicate
 detection, per-album filtering, and richer iCloud "not downloaded" placeholders.
+
+## TestFlight
+
+`scripts/testflight.sh` archives a Release build and uploads it to App Store Connect using
+an App Store Connect API key (Team key, App Manager role):
+
+```sh
+ASC_KEY_ID=XXXXXXXXXX ASC_ISSUER_ID=<uuid> scripts/testflight.sh
+```
+
+The `.p8` is read from `~/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8` unless
+`ASC_KEY_PATH` says otherwise. Signing is automatic (team `B89YM4B72X`); Xcode creates the
+distribution certificate and App Store profile on first run. The build number defaults to a
+UTC timestamp so successive uploads never collide. `ITSAppUsesNonExemptEncryption` is set
+to false in the Info.plist, so builds skip the export-compliance prompt.

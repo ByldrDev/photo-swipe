@@ -13,6 +13,7 @@
 		1BBB0D70412A5C1396DB8A00 /* PhotoSwipeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD4BFCFA42E704998845D5E /* PhotoSwipeApp.swift */; };
 		1CF52CD671085689A678DA43 /* PhotoSwipeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BB98F4D306E1E291D5AB55C /* PhotoSwipeUITests.swift */; };
 		27AF102C6874CB957FB1BF04 /* SwipeDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21FB4170367D7ABCDAC0066E /* SwipeDecision.swift */; };
+		485311E8F87ACD436A22CD47 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C8CF1D1165DEA0C4119F99A /* Assets.xcassets */; };
 		486ABA77ECD6BA2F1CF61784 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5D5815C2A0248D0906156C /* Theme.swift */; };
 		5DF07DB3B9C2F7466DD0E3D7 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6254369E6996E668E46E9F /* HomeView.swift */; };
 		61337FCB02745F56837E5EA7 /* SwipeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EBAE040F1433A5451B0D8 /* SwipeSession.swift */; };
@@ -56,6 +57,7 @@
 		61FB5F5F985146B01F026F3A /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		6BB98F4D306E1E291D5AB55C /* PhotoSwipeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSwipeUITests.swift; sourceTree = "<group>"; };
 		880E8A73FCAA89BB0F0784C3 /* PhotoSwipeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PhotoSwipeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C8CF1D1165DEA0C4119F99A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A7CC3B98E19F1C00B601C3BD /* AssetImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetImageLoader.swift; sourceTree = "<group>"; };
 		B09DEEE0AC608896784C7F9E /* StartPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartPickerView.swift; sourceTree = "<group>"; };
 		C65C2619600F34DE42EBFF7E /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 		76BBF63374BA9031FECB536B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9C8CF1D1165DEA0C4119F99A /* Assets.xcassets */,
 				03AB91CD9F66CD48272AEF3F /* Info.plist */,
 			);
 			path = Resources;
@@ -172,6 +175,7 @@
 			buildConfigurationList = FAE6EA967A0E00DA59481ED3 /* Build configuration list for PBXNativeTarget "PhotoSwipe" */;
 			buildPhases = (
 				B8C7496907E27492C0218F73 /* Sources */,
+				E763B48F7C8560E17E923F58 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -230,15 +234,15 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					24F5DFBDA8E50776AC53BBB1 = {
-						DevelopmentTeam = ZFLMF363GG;
+						DevelopmentTeam = B89YM4B72X;
 						ProvisioningStyle = Automatic;
 					};
 					49F24E38B5D2641C3DF5C9D6 = {
-						DevelopmentTeam = ZFLMF363GG;
+						DevelopmentTeam = B89YM4B72X;
 						ProvisioningStyle = Automatic;
 					};
 					AEC3796CAA4B6625A276F054 = {
-						DevelopmentTeam = ZFLMF363GG;
+						DevelopmentTeam = B89YM4B72X;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 24F5DFBDA8E50776AC53BBB1;
 					};
@@ -264,6 +268,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E763B48F7C8560E17E923F58 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				485311E8F87ACD436A22CD47 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		29B08C8B63EDE4CD76795B1D /* Sources */ = {
@@ -324,6 +339,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = PhotoSwipe/Resources/Info.plist;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
@@ -331,6 +347,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryancwynar.PhotoSwipe;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -359,6 +376,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = PhotoSwipe/Resources/Info.plist;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
@@ -366,6 +384,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ryancwynar.PhotoSwipe;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -425,7 +444,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = ZFLMF363GG;
+				DEVELOPMENT_TEAM = B89YM4B72X;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -500,7 +519,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = ZFLMF363GG;
+				DEVELOPMENT_TEAM = B89YM4B72X;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
