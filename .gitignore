@@ -17,4 +17,4 @@ playground.xcworkspace
 Packages/
 .build/
 # Screenshots from local smoke runs
-/screenshots/
+
