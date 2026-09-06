@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select latest Xcode
+        run: |
+          sudo xcode-select -s "$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+          xcodebuild -version
+      - name: Pick a simulator
+        id: sim
+        run: |
+          NAME=$(xcrun simctl list devices available | grep -oE "iPhone [0-9]+( Pro)?" | sort -V | tail -1)
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "Using $NAME"
+      - name: Build
+        run: |
+          xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipe \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}" \
+            -skipPackagePluginValidation build
+      - name: Unit tests
+        run: |
+          xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipe \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}" \
+            -only-testing:PhotoSwipeTests test
+      # UI tests need real photo-library permission dialogs and mutate the
+      # simulator library; they run locally (see README) rather than in CI.
