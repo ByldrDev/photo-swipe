@@ -10,7 +10,12 @@ import Observation
 final class AssetVideoPlayer {
     let player = AVPlayer()
     private(set) var isReady = false
-    var isMuted = true { didSet { player.isMuted = isMuted } }
+    var isMuted = true {
+        didSet {
+            player.isMuted = isMuted
+            configureAudioSession(unmuted: !isMuted)
+        }
+    }
     private(set) var loadedID: String?
 
     @ObservationIgnored private var requestID: PHImageRequestID?
@@ -49,6 +54,24 @@ final class AssetVideoPlayer {
         player.play()
     }
 
+    /// Without an explicit playback session iOS treats the video as ambient
+    /// sound and the ring/silent switch mutes it. Claim `.playback` only while
+    /// the user has unmuted, so muted browsing keeps their music going.
+    private func configureAudioSession(unmuted: Bool) {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            if unmuted {
+                try session.setCategory(.playback, mode: .moviePlayback, options: [])
+                try session.setActive(true)
+            } else {
+                try session.setActive(false, options: .notifyOthersOnDeactivation)
+                try session.setCategory(.ambient, mode: .moviePlayback, options: [.mixWithOthers])
+            }
+        } catch {
+            // Audio session failures are non-fatal; video still plays.
+        }
+    }
+
     func play() { if isReady { player.play() } }
     func pause() { player.pause() }
 
@@ -61,5 +84,8 @@ final class AssetVideoPlayer {
         player.replaceCurrentItem(with: nil)
         isReady = false
         loadedID = nil
+        if !isMuted {
+            isMuted = true
+        }
     }
 }
