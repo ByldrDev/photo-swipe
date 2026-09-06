@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		1BBB0D70412A5C1396DB8A00 /* PhotoSwipeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD4BFCFA42E704998845D5E /* PhotoSwipeApp.swift */; };
 		1CF52CD671085689A678DA43 /* PhotoSwipeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BB98F4D306E1E291D5AB55C /* PhotoSwipeUITests.swift */; };
-		F3F466351A74B7DF9966B9F7 /* PlaceholderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E269D33A2311336E018101D1 /* PlaceholderTests.swift */; };
+		27AF102C6874CB957FB1BF04 /* SwipeDecision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21FB4170367D7ABCDAC0066E /* SwipeDecision.swift */; };
+		61337FCB02745F56837E5EA7 /* SwipeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2EBAE040F1433A5451B0D8 /* SwipeSession.swift */; };
+		D6DB842353F6F7CA9B935087 /* SwipeSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276987977DAC0D01A4F76DD8 /* SwipeSessionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,12 +33,14 @@
 
 /* Begin PBXFileReference section */
 		03AB91CD9F66CD48272AEF3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		0A2EBAE040F1433A5451B0D8 /* SwipeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeSession.swift; sourceTree = "<group>"; };
 		1BE01F83ED0C1A08D871DF54 /* PhotoSwipeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PhotoSwipeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		21FB4170367D7ABCDAC0066E /* SwipeDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeDecision.swift; sourceTree = "<group>"; };
+		276987977DAC0D01A4F76DD8 /* SwipeSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeSessionTests.swift; sourceTree = "<group>"; };
 		2981107A74443087108E74FA /* PhotoSwipe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PhotoSwipe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DD4BFCFA42E704998845D5E /* PhotoSwipeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSwipeApp.swift; sourceTree = "<group>"; };
 		6BB98F4D306E1E291D5AB55C /* PhotoSwipeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSwipeUITests.swift; sourceTree = "<group>"; };
 		880E8A73FCAA89BB0F0784C3 /* PhotoSwipeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PhotoSwipeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E269D33A2311336E018101D1 /* PlaceholderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -88,6 +92,8 @@
 		B1182CEF30E7DB3E3E9E1E60 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				21FB4170367D7ABCDAC0066E /* SwipeDecision.swift */,
+				0A2EBAE040F1433A5451B0D8 /* SwipeSession.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -95,7 +101,7 @@
 		CD1D75C70F2B2119149B50C9 /* PhotoSwipeTests */ = {
 			isa = PBXGroup;
 			children = (
-				E269D33A2311336E018101D1 /* PlaceholderTests.swift */,
+				276987977DAC0D01A4F76DD8 /* SwipeSessionTests.swift */,
 			);
 			path = PhotoSwipeTests;
 			sourceTree = "<group>";
@@ -239,7 +245,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F3F466351A74B7DF9966B9F7 /* PlaceholderTests.swift in Sources */,
+				D6DB842353F6F7CA9B935087 /* SwipeSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +254,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BBB0D70412A5C1396DB8A00 /* PhotoSwipeApp.swift in Sources */,
+				27AF102C6874CB957FB1BF04 /* SwipeDecision.swift in Sources */,
+				61337FCB02745F56837E5EA7 /* SwipeSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +297,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -323,6 +332,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -397,6 +407,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -478,6 +489,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

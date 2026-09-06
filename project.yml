@@ -43,6 +43,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ryancwynar.PhotoSwipeTests
+        GENERATE_INFOPLIST_FILE: YES
   PhotoSwipeUITests:
     type: bundle.ui-testing
     platform: iOS
@@ -53,6 +54,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.ryancwynar.PhotoSwipeUITests
+        GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: PhotoSwipe
 schemes:
   PhotoSwipe:
