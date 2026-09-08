@@ -34,7 +34,7 @@ struct ReviewView: View {
         .inlineNavigationTitle()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Done") { dismiss() }.accessibilityIdentifier("reviewDoneButton")
+                Button("Back") { dismiss() }.accessibilityIdentifier("reviewDoneButton")
             }
         }
         .alert("Couldn't apply changes", isPresented: Binding(
@@ -46,7 +46,11 @@ struct ReviewView: View {
             Text(model.commitError ?? "")
         }
         .alert("Done", isPresented: $showResult) {
-            Button("OK") { dismiss() }
+            // The pass is over: close Review and leave the deck; Home offers Resume.
+            Button("OK") {
+                dismiss()
+                model.isSwiping = false
+            }
         } message: {
             if let r = model.lastCommit {
                 Text("Deleted \(r.deletedCount.formatted()) and hid \(r.hiddenCount.formatted()).")

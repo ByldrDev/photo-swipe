@@ -11,9 +11,10 @@ Enter **delete mode**, see one photo fullscreen at a time, and swipe:
 | Swipe **up** | Queue for hiding (iOS's Face ID-locked Hidden album) |
 | **Undo** button | Step back to the previous photo and decide again |
 
-Nothing is destroyed while you swipe. When you're done, the **Review** screen shows
-everything queued, lets you rescue anything with a tap, and commits all changes in one
-batch. iOS asks you to confirm once for hides and once for deletes; deleted photos land
+Nothing is destroyed while you swipe. Tap **Done** (top right, showing how many changes are
+queued) whenever you want to stop: the **Review** screen shows everything queued, lets you
+rescue anything with a tap, and commits all changes in one batch, then returns you Home. With
+nothing queued, Done simply leaves the deck; Home offers **Resume** to pick up where you left off. iOS asks you to confirm once for hides and once for deletes; deleted photos land
 in Recently Deleted for 30 days.
 
 Videos play inline on the card: they autoplay muted and loop, and swipes work over the

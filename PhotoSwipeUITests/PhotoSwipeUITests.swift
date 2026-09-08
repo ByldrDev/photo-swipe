@@ -205,8 +205,7 @@ final class PhotoSwipeUITests: XCTestCase {
         saveScreenshot("commit-result")
         done.buttons["OK"].tap()
 
-        // Back on the deck; close it and check Home's count.
-        app.buttons["closeButton"].tap()
+        // Committing ends the pass and returns to Home; check its count.
         let count = app.staticTexts["libraryCount"]
         let expectation = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "label == %@", (before - 2).formatted()), object: count)

@@ -407,27 +407,40 @@ struct SwipeView: View {
 
             Spacer()
 
+            // "Done": with queued changes, go decide on them; with none, just leave.
             Button {
-                showReview = true
+                finishReviewing()
             } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "checklist")
+                HStack(spacing: 8) {
+                    Text("Done")
+                        .font(.subheadline.weight(.bold))
                     if let pending = model.session?.pendingCount, pending > 0 {
                         Text(pending.formatted())
-                            .font(.subheadline.monospacedDigit().weight(.bold))
+                            .font(.caption.monospacedDigit().weight(.bold))
+                            .padding(.horizontal, 7).padding(.vertical, 2)
+                            .background(.white.opacity(0.25), in: Capsule())
                             .accessibilityIdentifier("pendingCount")
                     }
                 }
-                .font(.title3.weight(.semibold))
-                .padding(10)
-                .background(.black.opacity(0.5), in: Capsule())
+                .padding(.horizontal, 14).padding(.vertical, 9)
+                .background((model.session?.pendingCount ?? 0) > 0 ? Color.accentColor : .black.opacity(0.5), in: Capsule())
             }
             .buttonStyle(.plain)
             .keyboardShortcut("r", modifiers: .command)
             .accessibilityIdentifier("reviewButton")
-            .accessibilityLabel("Review")
+            .accessibilityLabel((model.session?.pendingCount ?? 0) > 0 ? "Done, review changes" : "Done")
         }
         .foregroundStyle(.white)
+    }
+
+    /// The end of a reviewing pass: decide on queued changes if there are any,
+    /// otherwise there is nothing to decide and we return to Home.
+    private func finishReviewing() {
+        if (model.session?.pendingCount ?? 0) > 0 {
+            showReview = true
+        } else {
+            model.isSwiping = false
+        }
     }
 
     /// "Burst 3/12", with a star when Photos or the user picked this frame.
@@ -540,9 +553,10 @@ struct SwipeView: View {
                 Button("Undo last") { model.undo() }
                     .buttonStyle(.bordered)
                     .disabled(!session.canUndo)
-                Button("Review changes") { showReview = true }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(session.pendingCount == 0)
+                Button(session.pendingCount > 0 ? "Done · review \(session.pendingCount.formatted()) changes" : "Done") {
+                    finishReviewing()
+                }
+                .buttonStyle(.borderedProminent)
             }
             .padding(.top)
         }
