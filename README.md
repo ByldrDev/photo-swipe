@@ -142,7 +142,9 @@ Open `PhotoSwipe.xcodeproj`, pick your iPhone, run. Signing is automatic with te
 ## Releasing the Mac app
 
 `scripts/release-mac.sh` bumps the version (shared `scripts/bump-version.sh`), builds a Release
-`PhotoSwipeMac`, zips it, pushes the tag and creates a GitHub release with the zip attached.
+`PhotoSwipeMac`, packages a `.dmg` (with an Applications shortcut) and a `.zip`, pushes the tag
+and creates a GitHub release with both attached. Re-run with `VERSION=<existing>` to rebuild and
+replace the assets of a release that already exists.
 
 ```sh
 scripts/release-mac.sh                       # ad-hoc signed unless a Developer ID cert exists

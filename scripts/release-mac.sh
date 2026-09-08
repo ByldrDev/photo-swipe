@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build the macOS app and publish it as a GitHub release (zip attached to the tag).
+# Build the macOS app and publish it as a GitHub release: a .dmg (drag to Applications) and a
+# .zip attached to the tag. Re-running for an existing version replaces the assets and notes.
 #
 # Signing, decided by what is in the login keychain:
 #   - "Developer ID Application" certificate present: the app is signed with it, notarized
@@ -64,13 +65,28 @@ else
 fi
 ditto -c -k --keepParent "$APP" "$ZIP"
 
+# Disk image with an Applications shortcut, the conventional Mac download.
+echo "==> Building disk image"
+DMG="$OUT/PhotoSwipe-$VERSION-macOS.dmg"
+STAGE="$OUT/dmg"
+rm -rf "$STAGE" && mkdir -p "$STAGE"
+cp -R "$APP" "$STAGE/"
+ln -s /Applications "$STAGE/Applications"
+hdiutil create -volname "PhotoSwipe $VERSION" -srcfolder "$STAGE" -ov -format UDZO -quiet "$DMG"
+if [ -n "$DEVID" ]; then
+  codesign --sign "$DEVID" --timestamp "$DMG"
+  RESULT="$(xcrun notarytool submit "$DMG" --key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID" --wait 2>&1 | tee /dev/stderr)"
+  echo "$RESULT" | grep -q "status: Accepted" || { echo "dmg notarization failed" >&2; exit 1; }
+  xcrun stapler staple "$DMG"
+fi
+
 echo "==> Pushing v$VERSION"
 git push --follow-tags
 
 NOTES="$(cat <<EOF
 PhotoSwipe for macOS. Requires macOS 14 or later.
 
-**Install:** unzip, drag PhotoSwipe.app to Applications, open it and allow Photos access when asked.
+**Install:** open the .dmg, drag PhotoSwipe to Applications, launch it and allow Photos access when asked. (A .zip of the app is attached too.)
 
 $OPEN_NOTE
 
@@ -82,5 +98,12 @@ EOF
 )"
 FLAGS=()
 [ "${DRAFT:-}" = "1" ] && FLAGS+=(--draft)
-echo "==> Creating GitHub release v$VERSION"
-gh release create "v$VERSION" "$ZIP" --title "PhotoSwipe $VERSION" --notes "$NOTES" "${FLAGS[@]+"${FLAGS[@]}"}"
+if gh release view "v$VERSION" >/dev/null 2>&1; then
+  echo "==> Updating existing GitHub release v$VERSION"
+  gh release upload "v$VERSION" "$DMG" "$ZIP" --clobber
+  gh release edit "v$VERSION" --title "PhotoSwipe $VERSION" --notes "$NOTES"
+  gh release view "v$VERSION" --json url -q .url
+else
+  echo "==> Creating GitHub release v$VERSION"
+  gh release create "v$VERSION" "$DMG" "$ZIP" --title "PhotoSwipe $VERSION" --notes "$NOTES" "${FLAGS[@]+"${FLAGS[@]}"}"
+fi
