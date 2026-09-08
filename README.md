@@ -194,6 +194,18 @@ security import developer_id_application.p12 -k ~/Library/Keychains/login.keycha
 
 Duplicate detection, per-album filtering, and richer iCloud "not downloaded" placeholders.
 
+## Releasing
+
+`scripts/release.sh` is the normal way to ship: it bumps the shared version once, publishes the
+Mac build to GitHub Releases and uploads the iOS build to TestFlight, so both platforms always
+carry the same version number.
+
+```sh
+ASC_KEY_ID=2M8HBZGHA8 ASC_ISSUER_ID=7a62ff2d-f404-42b0-b11b-2a475a0c4ad3 scripts/release.sh
+```
+
+`MAC=0` or `IOS=0` skips a side. The two per-platform scripts below still work on their own.
+
 ## TestFlight
 
 `scripts/testflight.sh` archives a Release build and uploads it to App Store Connect:
