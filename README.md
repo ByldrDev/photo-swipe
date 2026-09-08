@@ -16,8 +16,18 @@ everything queued, lets you rescue anything with a tap, and commits all changes 
 batch. iOS asks you to confirm once for hides and once for deletes; deleted photos land
 in Recently Deleted for 30 days.
 
-Videos play inline on the card: they autoplay muted and loop, with a speaker button to
-unmute, and swipes work over the playing video.
+Videos play inline on the card: they autoplay muted and loop, and swipes work over the
+playing video. A transport strip under the card has play/pause, a scrubber with elapsed and
+total time (drag pauses, release resumes), and the mute toggle.
+
+Pinch or double-tap any card to zoom in and inspect detail; while zoomed, one-finger drags
+pan instead of swiping, and double-tapping again (or pinching back) resets. The card fills
+the screen and letterboxed photos sit on a blurred, darkened copy of themselves, so the next
+card in the stack never shows through.
+
+Bursts are flattened: every frame of a burst is its own card (Photos normally shows only the
+representative frame), with a "Burst 3/12" badge under the top bar and a star on the frames
+Photos or you picked. Deleting a frame deletes just that frame.
 
 Start from your newest photo by default, flip to oldest-first, or use **Choose where to
 start…** to jump to any month or date. Sessions are saved after every swipe, so quitting
@@ -37,10 +47,13 @@ the app never loses your delete list; Home offers **Resume** on the next launch.
 PhotoSwipe/
   App/          PhotoSwipeApp (entry), AppModel (wires session ↔ PhotoKit ↔ disk)
   Models/       SwipeSession — pure, testable engine: cursor, direction, decision log, undo
+                BurstInfo — groups burst frames and numbers them in capture order
   Services/     PhotoLibraryService (PhotoKit), AssetImageLoader, AssetVideoPlayer, SessionStore
-  Views/        HomeView, StartPickerView, SwipeView, ReviewView, AssetMediaView (image or
-                inline video), AssetImageView, PlayerLayerView, Theme
-PhotoSwipeTests/     unit tests for SwipeSession and SessionStore
+  Views/        HomeView, StartPickerView, SwipeView (deck, swipe + pinch-zoom gestures),
+                ReviewView, AssetMediaView (image or inline video), AssetImageView (with
+                blurred backdrop), VideoControlsView (play/pause, scrubber, mute),
+                PlayerLayerView, Theme
+PhotoSwipeTests/     unit tests for SwipeSession, SessionStore and BurstInfo
 PhotoSwipeUITests/   XCUITests that drive real swipes against the simulator library
 ```
 
@@ -52,7 +65,14 @@ the request size and options match, so live requests and the cache share one opt
 `SwipeSession` never imports Photos. `PhotoLibraryService` maps the library to an array of
 `localIdentifier`s (newest first) and the session walks that array; `direction` decides
 whether the cursor moves +1 or -1. Hidden assets are excluded from the fetch, so a photo
-you hide never resurfaces in triage.
+you hide never resurfaces in triage. The fetch sets `includeAllBurstAssets`, so burst frames
+are ordinary entries in that array; `BurstInfo.index` computes each frame's position from
+the newest-first order.
+
+The one `AssetVideoPlayer` is owned by `AppModel`, not by the card, so the transport strip in
+the deck's chrome can drive it and it survives pinch-zoom (which scales only the card). Cards
+are recreated per asset and SwiftUI does not order the old card's `onDisappear` against the
+new card's `onAppear`, so a card only stops the player if `loadedID` is still its own asset.
 
 ## Build & test
 
@@ -82,6 +102,8 @@ xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipe \
 - Seed a test clip for the video test: `ffmpeg -f lavfi -i testsrc2=size=720x1280:rate=30:duration=4 -f lavfi -i sine=frequency=440:duration=4 -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest clip.mp4 && xcrun simctl addmedia booted clip.mp4`
 - The commit test mutates the simulator library (that is the point). Re-seed with
   `addmedia` if it runs low.
+- The simulator library has no bursts and `addmedia` cannot create one, so the burst badge
+  and per-frame deletion can only be checked on a real device.
 
 ## Running on a device
 

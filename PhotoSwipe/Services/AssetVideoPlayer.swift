@@ -4,7 +4,8 @@ import Photos
 import Observation
 
 /// Owns one AVPlayer for the current video card: loads the asset's player item,
-/// autoplays muted, loops, and tears down cleanly when the card changes.
+/// autoplays muted, loops, reports playback time for the scrubber, and tears
+/// down cleanly when the card changes.
 @MainActor
 @Observable
 final class AssetVideoPlayer {
@@ -26,9 +27,20 @@ final class AssetVideoPlayer {
     }
     private(set) var loadedID: String?
 
+    /// Seconds into the clip, updated ~30×/s while an item is attached.
+    private(set) var currentTime: Double = 0
+    /// Clip length in seconds; 0 until the item reports it.
+    private(set) var duration: Double = 0
+    /// False after the user taps pause. Scrubbing pauses too, but only for the
+    /// length of the drag; `isPlaying` stays true so playback resumes on release.
+    private(set) var isPlaying = true
+    private(set) var isScrubbing = false
+
     @ObservationIgnored private var requestID: PHImageRequestID?
     @ObservationIgnored private var loopObserver: NSObjectProtocol?
     @ObservationIgnored private var statusObserver: NSKeyValueObservation?
+    @ObservationIgnored private var durationObserver: NSKeyValueObservation?
+    @ObservationIgnored private var timeObserver: Any?
     @ObservationIgnored private let library: PhotoLibraryService
 
     init(library: PhotoLibraryService) {
@@ -36,6 +48,10 @@ final class AssetVideoPlayer {
         player.isMuted = true
         player.actionAtItemEnd = .none
         player.preventsDisplaySleepDuringVideoPlayback = false
+    }
+
+    deinit {
+        if let timeObserver { player.removeTimeObserver(timeObserver) }
     }
 
     func load(id: String) {
@@ -88,7 +104,7 @@ final class AssetVideoPlayer {
             guard let self else { return }
             Task { @MainActor in
                 self.player.seek(to: .zero)
-                self.player.play()
+                if self.isPlaying { self.player.play() }
             }
         }
         // Surface decode/streaming failures that happen after the item is handed over.
@@ -100,8 +116,50 @@ final class AssetVideoPlayer {
                 self.state = .failed(message)
             }
         }
+        durationObserver = item.observe(\.duration, options: [.initial, .new]) { [weak self] item, _ in
+            let seconds = item.duration.seconds
+            Task { @MainActor in
+                guard let self else { return }
+                self.duration = seconds.isFinite ? seconds : 0
+            }
+        }
+        let interval = CMTime(value: 1, timescale: 30)
+        timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+            Task { @MainActor in
+                guard let self, !self.isScrubbing else { return }
+                self.currentTime = time.seconds
+            }
+        }
         state = .ready
+        isPlaying = true
         player.play()
+    }
+
+    // MARK: - Transport
+
+    func togglePlayback() {
+        guard isReady else { return }
+        isPlaying.toggle()
+        isPlaying ? player.play() : player.pause()
+    }
+
+    /// Call on every drag update of the scrubber. Playback is held for the
+    /// duration of the drag; the exact-tolerance seek makes frame stepping work.
+    func scrub(to seconds: Double) {
+        guard isReady, duration > 0 else { return }
+        if !isScrubbing {
+            isScrubbing = true
+            player.pause()
+        }
+        let clamped = min(max(0, seconds), duration)
+        currentTime = clamped
+        player.seek(to: CMTime(seconds: clamped, preferredTimescale: 600), toleranceBefore: .zero, toleranceAfter: .zero)
+    }
+
+    func endScrubbing() {
+        guard isScrubbing else { return }
+        isScrubbing = false
+        if isPlaying { player.play() }
     }
 
     /// Without an explicit playback session iOS treats the video as ambient
@@ -122,7 +180,8 @@ final class AssetVideoPlayer {
         }
     }
 
-    func play() { if isReady { player.play() } }
+    /// Scene-phase hooks: resume only if the user hasn't paused.
+    func play() { if isReady, isPlaying { player.play() } }
     func pause() { player.pause() }
 
     func stop() {
@@ -132,10 +191,18 @@ final class AssetVideoPlayer {
         loopObserver = nil
         statusObserver?.invalidate()
         statusObserver = nil
+        durationObserver?.invalidate()
+        durationObserver = nil
+        if let timeObserver { player.removeTimeObserver(timeObserver) }
+        timeObserver = nil
         player.pause()
         player.replaceCurrentItem(with: nil)
         state = .idle
         loadedID = nil
+        currentTime = 0
+        duration = 0
+        isPlaying = true
+        isScrubbing = false
         if !isMuted { isMuted = true }
     }
 }

@@ -201,7 +201,22 @@ final class PhotoSwipeUITests: XCTestCase {
         XCTAssertEqual(app.buttons["muteButton"].label, "Unmute", "videos start muted")
         app.buttons["muteButton"].tap()
         XCTAssertEqual(app.buttons["muteButton"].label, "Mute")
+
+        // Transport: pause, then scrub most of the way through the clip.
+        let playPause = app.buttons["playPauseButton"]
+        XCTAssertEqual(playPause.label, "Pause", "videos autoplay")
+        playPause.tap()
+        XCTAssertEqual(playPause.label, "Play")
+        let scrubber = app.descendants(matching: .any)["videoScrubber"].firstMatch
+        XCTAssertTrue(scrubber.waitForExistence(timeout: 2))
+        scrubber.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.5))
+            .press(forDuration: 0.1, thenDragTo: scrubber.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)))
+        let elapsed = app.staticTexts["videoElapsed"]
+        XCTAssertTrue(elapsed.waitForExistence(timeout: 2))
+        XCTAssertNotEqual(elapsed.label, "0:00", "scrubbing to 90% should move the elapsed time off zero")
         saveScreenshot("video-card")
+        playPause.tap()
+        XCTAssertEqual(playPause.label, "Pause")
         // Swiping still works over the video.
         let before = progress
         let wasLast = !app.buttons["muteButton"].exists ? false : true

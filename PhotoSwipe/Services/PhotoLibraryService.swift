@@ -25,8 +25,9 @@ enum PhotoLibraryError: LocalizedError {
 }
 
 /// Thin wrapper around PhotoKit: authorization, a newest-first snapshot of the
-/// library (images + videos, hidden excluded), cached image loading, and the
-/// single batched `commit` that actually deletes/hides assets.
+/// library (images + videos, hidden excluded, every burst frame expanded),
+/// cached image loading, and the single batched `commit` that actually
+/// deletes/hides assets.
 @MainActor
 @Observable
 final class PhotoLibraryService: NSObject {
@@ -39,6 +40,7 @@ final class PhotoLibraryService: NSObject {
     private(set) var libraryVersion = 0
 
     @ObservationIgnored private var assetsByID: [String: PHAsset] = [:]
+    @ObservationIgnored private var burstInfoByID: [String: BurstInfo] = [:]
     @ObservationIgnored private var fetchResult: PHFetchResult<PHAsset>?
     @ObservationIgnored private let imageManager = PHCachingImageManager()
     @ObservationIgnored private var observing = false
@@ -68,6 +70,8 @@ final class PhotoLibraryService: NSObject {
     // MARK: - Library snapshot
 
     /// Fetches every non-hidden image/video, newest first, and builds the id map.
+    /// Bursts are flattened: every frame becomes its own entry (PhotoKit hides
+    /// all but the representative frame unless asked), so each can be triaged.
     /// Safe to call repeatedly; later calls refresh the snapshot.
     func loadLibrary() async {
         guard hasAccess else { return }
@@ -77,6 +81,7 @@ final class PhotoLibraryService: NSObject {
         let options = PHFetchOptions()
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         options.includeHiddenAssets = false
+        options.includeAllBurstAssets = true
         options.predicate = NSPredicate(
             format: "mediaType == %d OR mediaType == %d",
             PHAssetMediaType.image.rawValue, PHAssetMediaType.video.rawValue
@@ -84,20 +89,26 @@ final class PhotoLibraryService: NSObject {
         let result = PHAsset.fetchAssets(with: options)
 
         // Enumerating tens of thousands of assets takes a moment; keep it off the main thread.
-        let (ids, map) = await Task.detached(priority: .userInitiated) { () -> ([String], [String: PHAsset]) in
+        let (ids, map, bursts) = await Task.detached(priority: .userInitiated) { () -> ([String], [String: PHAsset], [String: BurstInfo]) in
             var ids: [String] = []
             var map: [String: PHAsset] = [:]
+            var frames: [(id: String, burstID: String?, isPicked: Bool)] = []
             ids.reserveCapacity(result.count)
             map.reserveCapacity(result.count)
             result.enumerateObjects { asset, _, _ in
                 ids.append(asset.localIdentifier)
                 map[asset.localIdentifier] = asset
+                if let burstID = asset.burstIdentifier {
+                    let picked = !asset.burstSelectionTypes.intersection([.autoPick, .userPick]).isEmpty
+                    frames.append((asset.localIdentifier, burstID, picked))
+                }
             }
-            return (ids, map)
+            return (ids, map, BurstInfo.index(newestFirst: frames))
         }.value
 
         fetchResult = result
         assetsByID = map
+        burstInfoByID = bursts
         assetIDs = ids
         hasLoaded = true
         libraryVersion += 1
@@ -111,6 +122,16 @@ final class PhotoLibraryService: NSObject {
     func asset(for id: String) -> PHAsset? { assetsByID[id] }
 
     func assets(for ids: [String]) -> [PHAsset] { ids.compactMap { assetsByID[$0] } }
+
+    /// Non-nil only for frames that belong to a burst.
+    func burstInfo(for id: String) -> BurstInfo? { burstInfoByID[id] }
+
+    /// Native pixel dimensions, known before any image bytes are loaded.
+    /// Used to size the zoomable content of a card.
+    func pixelSize(for id: String) -> CGSize? {
+        guard let asset = assetsByID[id], asset.pixelWidth > 0, asset.pixelHeight > 0 else { return nil }
+        return CGSize(width: asset.pixelWidth, height: asset.pixelHeight)
+    }
 
     // MARK: - Images
 

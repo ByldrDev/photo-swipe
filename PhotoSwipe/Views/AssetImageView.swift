@@ -2,17 +2,25 @@ import SwiftUI
 import Photos
 
 /// Fullscreen-capable image for a single asset with a video duration badge.
+///
+/// With `showsBackdrop` the letterboxed area around a non-full-bleed photo is
+/// filled with a blurred, darkened copy of the same photo instead of showing
+/// whatever card is stacked underneath.
 struct AssetImageView: View {
     @Environment(AppModel.self) private var model
     let assetID: String
     var targetSize: CGSize
     var contentMode: ContentMode = .fit
+    var showsBackdrop = false
 
     @State private var loader: AssetImageLoader?
 
     var body: some View {
         ZStack {
             if let image = loader?.image {
+                if showsBackdrop {
+                    backdrop(image)
+                }
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: contentMode)
@@ -21,7 +29,9 @@ struct AssetImageView: View {
                 Rectangle().fill(Color(white: 0.12))
                 ProgressView().tint(.white)
             }
-            if let asset = model.library.asset(for: assetID), asset.mediaType == .video {
+            // Deck cards (the ones with a backdrop) get a transport strip with
+            // the duration instead, so the badge is thumbnail-only.
+            if !showsBackdrop, let asset = model.library.asset(for: assetID), asset.mediaType == .video {
                 VStack {
                     Spacer()
                     HStack {
@@ -35,9 +45,25 @@ struct AssetImageView: View {
                 }
             }
         }
+        .clipped()
         .onAppear { load() }
         .onChange(of: assetID) { _, _ in load() }
         .onDisappear { loader?.cancel() }
+    }
+
+    /// Scaled up past the edges so the blur has no transparent fringe, then
+    /// clipped by the parent ZStack.
+    private func backdrop(_ image: UIImage) -> some View {
+        Image(uiImage: image)
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: targetSize.width, height: targetSize.height)
+            .clipped()
+            .scaleEffect(1.2)
+            .blur(radius: 36, opaque: true)
+            .overlay(Color.black.opacity(0.5))
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 
     private func load() {

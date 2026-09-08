@@ -2,58 +2,48 @@ import SwiftUI
 
 /// The current card's content: a still image, or for videos the poster frame
 /// with an inline looping player layered on top once it is ready.
+///
+/// The player is shared (owned by `AppModel`) so the transport controls that
+/// live in the deck's chrome can drive the same instance.
 struct AssetMediaView: View {
     @Environment(AppModel.self) private var model
     let assetID: String
     let targetSize: CGSize
+    let player: AssetVideoPlayer
 
-    @State private var videoPlayer: AssetVideoPlayer?
     @Environment(\.scenePhase) private var scenePhase
 
     private var isVideo: Bool { model.library.isVideo(assetID) }
 
     var body: some View {
         ZStack {
-            AssetImageView(assetID: assetID, targetSize: targetSize)
-            if isVideo, let videoPlayer {
-                switch videoPlayer.state {
+            AssetImageView(assetID: assetID, targetSize: targetSize, showsBackdrop: true)
+            if isVideo, player.loadedID == assetID {
+                switch player.state {
                 case .ready:
-                    PlayerLayerView(player: videoPlayer.player)
+                    PlayerLayerView(player: player.player)
                         .transition(.opacity)
                         .accessibilityIdentifier("videoPlayer")
                 case .loading(let progress):
                     loadingBadge(progress)
                 case .failed(let message):
-                    failureBadge(message, retry: videoPlayer.retry)
+                    failureBadge(message, retry: player.retry)
                 case .idle:
                     EmptyView()
                 }
             }
         }
-        .overlay(alignment: .bottomTrailing) {
-            if isVideo, let videoPlayer {
-                Button {
-                    videoPlayer.isMuted.toggle()
-                    Haptics.light()
-                } label: {
-                    Image(systemName: videoPlayer.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
-                        .font(.body.weight(.semibold))
-                        .frame(width: 40, height: 40)
-                        .background(.black.opacity(0.55), in: Circle())
-                        .foregroundStyle(.white)
-                }
-                .padding(.trailing, 16)
-                .padding(.bottom, 110)
-                .accessibilityIdentifier("muteButton")
-                .accessibilityLabel(videoPlayer.isMuted ? "Unmute" : "Mute")
-            }
-        }
         .onAppear { startIfVideo() }
         .onChange(of: assetID) { _, _ in startIfVideo() }
         .onChange(of: scenePhase) { _, phase in
-            phase == .active ? videoPlayer?.play() : videoPlayer?.pause()
+            phase == .active ? player.play() : player.pause()
         }
-        .onDisappear { videoPlayer?.stop() }
+        .onDisappear {
+            // Cards are recreated per asset and SwiftUI does not order the old
+            // card's disappear against the new card's appear. Only stop the
+            // player if it is still showing *this* card's clip.
+            if player.loadedID == assetID { player.stop() }
+        }
     }
 
     private func loadingBadge(_ progress: Double?) -> some View {
@@ -91,11 +81,10 @@ struct AssetMediaView: View {
     }
 
     private func startIfVideo() {
-        guard isVideo else {
-            videoPlayer?.stop()
-            return
+        if isVideo {
+            player.load(id: assetID)
+        } else if player.loadedID != nil {
+            player.stop()
         }
-        if videoPlayer == nil { videoPlayer = AssetVideoPlayer(library: model.library) }
-        videoPlayer?.load(id: assetID)
     }
 }

@@ -10,6 +10,9 @@ import Observation
 final class AppModel {
     let library: PhotoLibraryService
     let store: SessionStore
+    /// The one player behind every video card. Owned here (not by the card) so
+    /// the transport controls in the deck's chrome can drive it.
+    let videoPlayer: AssetVideoPlayer
 
     private(set) var session: SwipeSession?
     var direction: SwipeDirection = .newestFirst
@@ -21,6 +24,7 @@ final class AppModel {
     init(library: PhotoLibraryService? = nil, store: SessionStore = SessionStore()) {
         self.library = library ?? PhotoLibraryService()
         self.store = store
+        self.videoPlayer = AssetVideoPlayer(library: self.library)
         self.session = store.load()
         if let session { direction = session.direction }
     }
