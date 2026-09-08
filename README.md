@@ -35,7 +35,16 @@ Start from your newest photo by default, flip to oldest-first, or use **Choose w
 start…** to jump to any month or date. Sessions are saved after every swipe, so quitting
 the app never loses your delete list; Home offers **Resume** on the next launch.
 
-![Home](screenshots/01-home.png) ![Swipe](screenshots/02-swipe.png) ![Review](screenshots/04-review.png)
+<p>
+  <img src="screenshots/01-home.png" width="30%" alt="Home">
+  <img src="screenshots/02-swipe.png" width="30%" alt="Swipe deck">
+  <img src="screenshots/07-zoom.png" width="30%" alt="Zoomed card with edge strips">
+</p>
+<p>
+  <img src="screenshots/06-video.png" width="30%" alt="Video card with scrubber">
+  <img src="screenshots/04-review.png" width="30%" alt="Review">
+  <img src="screenshots/08-mac.png" width="30%" alt="macOS">
+</p>
 
 ## macOS
 
@@ -154,8 +163,10 @@ ASC_KEY_ID=2M8HBZGHA8 ASC_ISSUER_ID=7a62ff2d-f404-42b0-b11b-2a475a0c4ad3 scripts
 **Signing.** Distribution outside the App Store needs a **Developer ID Application**
 certificate; if one is in the login keychain the script signs with it, notarizes via
 `notarytool` with the App Store Connect API key, and staples the ticket, so downloads open
-with no warning. Without one the build is ad-hoc signed and the first launch needs
-right-click → Open (or Privacy & Security → Open Anyway); the release notes explain this.
+with no warning. Without one the build is ad-hoc signed and Gatekeeper blocks the first launch; on macOS 15/26
+the dialog misleadingly says the app "is not supported on this Mac" (it is a universal binary).
+Privacy & Security → **Open Anyway**, or `xattr -dr com.apple.quarantine`, gets past it once; the
+release notes explain this. Notarization removes the step entirely.
 
 Only the team's **Account Holder** can create a Developer ID certificate, and the App Store
 Connect API refuses it (403) even with an App Manager key, so it is a one-time manual step:

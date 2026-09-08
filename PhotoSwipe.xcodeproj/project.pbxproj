@@ -36,11 +36,14 @@
 		7F453079C9F3C188C941D939 /* VideoControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A55F67127F54B51C6DEFD3 /* VideoControlsView.swift */; };
 		8B2EF0DFB907C210D0743DE3 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5474283F3428A323C8136A87 /* SessionStore.swift */; };
 		9BBF40EE3659F87325AD577F /* PhotoLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C936CEB8131E36288FBA0D48 /* PhotoLibraryService.swift */; };
+		B96924C9A6A6AC63C478D29B /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0E60C175CEEA6CDC07ED42 /* AppVersion.swift */; };
+		BD43415B31025660B56A4840 /* AppVersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C5526E93EC53CC01259D07 /* AppVersionTests.swift */; };
 		BFD87DDD48F555D72268EEFD /* VideoControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A55F67127F54B51C6DEFD3 /* VideoControlsView.swift */; };
 		C38D61D2003312AF94BF91CD /* Platform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66985D4EC6F11322A8DB8306 /* Platform.swift */; };
 		C70E56E134164EB277EA7C62 /* AssetImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44286A256D441945B90A0715 /* AssetImageView.swift */; };
 		CA3D68CA5262609EF3CB749F /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65C2619600F34DE42EBFF7E /* ReviewView.swift */; };
 		CBFA00FEA42BA8A246D6D44A /* AssetVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5A7F13D68CE098493F3890 /* AssetVideoPlayer.swift */; };
+		CD00CAA8C99ACB459507AA0F /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27B89B2C40C2F73338D0480 /* UpdateChecker.swift */; };
 		CE2724B70EAF094BA4C7BAB5 /* AssetImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC3B98E19F1C00B601C3BD /* AssetImageLoader.swift */; };
 		D2089997499CFB7893960CA1 /* AssetVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B5A7F13D68CE098493F3890 /* AssetVideoPlayer.swift */; };
 		D6DB842353F6F7CA9B935087 /* SwipeSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276987977DAC0D01A4F76DD8 /* SwipeSessionTests.swift */; };
@@ -48,6 +51,7 @@
 		DC5073F1049691721FE53932 /* AssetImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC3B98E19F1C00B601C3BD /* AssetImageLoader.swift */; };
 		E2A3515442A0DE43C65D2B13 /* PhotoSwipeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD4BFCFA42E704998845D5E /* PhotoSwipeApp.swift */; };
 		ECC2C6B6A2532711208EFFDC /* AssetMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB92C050E5A0342D53AC99DA /* AssetMediaView.swift */; };
+		F030DB111470CB5A8E880801 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0E60C175CEEA6CDC07ED42 /* AppVersion.swift */; };
 		F06EEAD4C4ED7E60946C8102 /* SwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDB89DCA1E9A0E6A26E16BD0 /* SwipeView.swift */; };
 		F38A4CAD3A740E2CAA71852E /* BurstInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 655C7317CEC112155B4E2B90 /* BurstInfo.swift */; };
 		FC36357FEA4D3323C3BFF87B /* BurstInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4993DFF75F1841F7133CAB /* BurstInfoTests.swift */; };
@@ -78,6 +82,7 @@
 		21FB4170367D7ABCDAC0066E /* SwipeDecision.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeDecision.swift; sourceTree = "<group>"; };
 		276987977DAC0D01A4F76DD8 /* SwipeSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeSessionTests.swift; sourceTree = "<group>"; };
 		2981107A74443087108E74FA /* PhotoSwipe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PhotoSwipe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C0E60C175CEEA6CDC07ED42 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		44286A256D441945B90A0715 /* AssetImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetImageView.swift; sourceTree = "<group>"; };
 		4DD4BFCFA42E704998845D5E /* PhotoSwipeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoSwipeApp.swift; sourceTree = "<group>"; };
 		5474283F3428A323C8136A87 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
@@ -95,6 +100,8 @@
 		C45F06C971A7AAB687CA6F21 /* PlayerLayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerLayerView.swift; sourceTree = "<group>"; };
 		C65C2619600F34DE42EBFF7E /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
 		C936CEB8131E36288FBA0D48 /* PhotoLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryService.swift; sourceTree = "<group>"; };
+		D27B89B2C40C2F73338D0480 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
+		D4C5526E93EC53CC01259D07 /* AppVersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionTests.swift; sourceTree = "<group>"; };
 		DD98D30CA185F96F716C8E7D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EACF1C407BEFEE7A9485AD45 /* PhotoSwipeMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoSwipeMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5D5815C2A0248D0906156C /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -138,6 +145,7 @@
 				DD98D30CA185F96F716C8E7D /* Assets.xcassets */,
 				81811C5BE8682B3D2C31E463 /* Info.plist */,
 				FAF730E888FD1CFAD24BEC0A /* PhotoSwipeMac.entitlements */,
+				D27B89B2C40C2F73338D0480 /* UpdateChecker.swift */,
 			);
 			path = PhotoSwipeMac;
 			sourceTree = "<group>";
@@ -177,6 +185,7 @@
 		B1182CEF30E7DB3E3E9E1E60 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				2C0E60C175CEEA6CDC07ED42 /* AppVersion.swift */,
 				655C7317CEC112155B4E2B90 /* BurstInfo.swift */,
 				21FB4170367D7ABCDAC0066E /* SwipeDecision.swift */,
 				0A2EBAE040F1433A5451B0D8 /* SwipeSession.swift */,
@@ -187,6 +196,7 @@
 		CD1D75C70F2B2119149B50C9 /* PhotoSwipeTests */ = {
 			isa = PBXGroup;
 			children = (
+				D4C5526E93EC53CC01259D07 /* AppVersionTests.swift */,
 				EC4993DFF75F1841F7133CAB /* BurstInfoTests.swift */,
 				0D5A466D688C56DC216FD9F2 /* SessionStoreTests.swift */,
 				276987977DAC0D01A4F76DD8 /* SwipeSessionTests.swift */,
@@ -381,6 +391,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD43415B31025660B56A4840 /* AppVersionTests.swift in Sources */,
 				FC36357FEA4D3323C3BFF87B /* BurstInfoTests.swift in Sources */,
 				66A0994947D469BB9A585C06 /* SessionStoreTests.swift in Sources */,
 				D6DB842353F6F7CA9B935087 /* SwipeSessionTests.swift in Sources */,
@@ -392,6 +403,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0D00215E9FD306BE148F97CA /* AppModel.swift in Sources */,
+				F030DB111470CB5A8E880801 /* AppVersion.swift in Sources */,
 				CE2724B70EAF094BA4C7BAB5 /* AssetImageLoader.swift in Sources */,
 				C70E56E134164EB277EA7C62 /* AssetImageView.swift in Sources */,
 				ECC2C6B6A2532711208EFFDC /* AssetMediaView.swift in Sources */,
@@ -418,6 +430,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FE8A04DA883DBCE6FCDA9EA /* AppModel.swift in Sources */,
+				B96924C9A6A6AC63C478D29B /* AppVersion.swift in Sources */,
 				DC5073F1049691721FE53932 /* AssetImageLoader.swift in Sources */,
 				4C0AD7D7939181D809D622AB /* AssetImageView.swift in Sources */,
 				06DFC788BAF6D1BA8F61491D /* AssetMediaView.swift in Sources */,
@@ -435,6 +448,7 @@
 				D8A8485572792AC9577DA524 /* SwipeSession.swift in Sources */,
 				F06EEAD4C4ED7E60946C8102 /* SwipeView.swift in Sources */,
 				32C53B1EC12609A84201115A /* Theme.swift in Sources */,
+				CD00CAA8C99ACB459507AA0F /* UpdateChecker.swift in Sources */,
 				BFD87DDD48F555D72268EEFD /* VideoControlsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

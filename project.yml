@@ -62,8 +62,10 @@ targets:
       properties:
         com.apple.security.app-sandbox: true
         com.apple.security.personal-information.photos-library: true
-        # iCloud Photos originals stream over the network.
+        # iCloud Photos originals stream over the network; the update checker talks to GitHub.
         com.apple.security.network.client: true
+        # "Check for Updates…" saves the new .dmg to ~/Downloads.
+        com.apple.security.files.downloads.read-write: true
     settings:
       base:
         # Same bundle id as iOS so both live under one App Store Connect record.

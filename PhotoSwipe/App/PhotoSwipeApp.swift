@@ -5,7 +5,7 @@ struct PhotoSwipeApp: App {
     @State private var model = AppModel()
 
     var body: some Scene {
-        WindowGroup {
+        let window = WindowGroup {
             RootView()
                 .environment(model)
                 .preferredColorScheme(.dark)
@@ -15,6 +15,15 @@ struct PhotoSwipeApp: App {
                 }
         }
         .defaultSize(width: 960, height: 760)
+        #if os(macOS)
+        return window.commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") { UpdateChecker.shared.checkInteractively() }
+            }
+        }
+        #else
+        return window
+        #endif
     }
 }
 
@@ -34,6 +43,7 @@ struct RootView: View {
         }
         .animation(.easeInOut(duration: 0.2), value: model.isSwiping)
         .frame(minWidth: 640, minHeight: 520)
+        .task { UpdateChecker.shared.checkAutomaticallyIfDue() }
         #else
         HomeView()
         #endif

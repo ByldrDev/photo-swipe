@@ -63,18 +63,55 @@ if [ -n "$DEVID" ]; then
   rm -f "$ZIP"
   OPEN_NOTE="Signed and notarized: double-click to open."
 else
-  OPEN_NOTE="This build is not notarized, so the first launch needs one extra step: right-click PhotoSwipe.app → Open, then Open again. If macOS only offers \"Move to Trash\", open System Settings → Privacy & Security and click **Open Anyway**."
+  OPEN_NOTE="This build is not notarized, so macOS blocks the first launch. On macOS 15/26 the dialog may even say the app \"is not supported on this Mac\" (it is; the app is a universal binary for Apple silicon and Intel). To open it once: try to launch it, then go to System Settings → Privacy & Security, scroll down and click **Open Anyway**. Or, in Terminal: \`xattr -dr com.apple.quarantine /Applications/PhotoSwipe.app\`. Later launches need no confirmation."
 fi
 ditto -c -k --keepParent "$APP" "$ZIP"
 
-# Disk image with an Applications shortcut, the conventional Mac download.
+# Disk image with the conventional installer window: app on the left, arrow,
+# Applications shortcut on the right. Finder is scripted to lay out a read-write
+# image, which is then compressed. Geometry must match scripts/dmg-background.swift.
 echo "==> Building disk image"
 DMG="$OUT/PhotoSwipe-$VERSION-macOS.dmg"
 STAGE="$OUT/dmg"
-rm -rf "$STAGE" && mkdir -p "$STAGE"
+VOLNAME="PhotoSwipe"
+rm -rf "$STAGE" && mkdir -p "$STAGE/.background"
 cp -R "$APP" "$STAGE/"
 ln -s /Applications "$STAGE/Applications"
-hdiutil create -volname "PhotoSwipe $VERSION" -srcfolder "$STAGE" -ov -format UDZO -quiet "$DMG"
+swift scripts/dmg-background.swift "$OUT/dmg-background"
+tiffutil -cathidpicheck "$OUT/dmg-background@1x.png" "$OUT/dmg-background@2x.png" -out "$STAGE/.background/background.tiff"
+RW="$OUT/PhotoSwipe-rw.dmg"
+hdiutil create -volname "$VOLNAME" -srcfolder "$STAGE" -ov -format UDRW -quiet "$RW"
+MOUNT="$(hdiutil attach "$RW" -readwrite -noverify -nobrowse | grep -o '/Volumes/.*')"
+if ! osascript <<APPLESCRIPT
+tell application "Finder"
+  tell disk "$VOLNAME"
+    open
+    set current view of container window to icon view
+    set toolbar visible of container window to false
+    set statusbar visible of container window to false
+    set the bounds of container window to {200, 120, 860, 540}
+    set opts to the icon view options of container window
+    set arrangement of opts to not arranged
+    set icon size of opts to 128
+    set text size of opts to 13
+    set background picture of opts to file ".background:background.tiff"
+    set position of item "PhotoSwipe.app" of container window to {165, 190}
+    set position of item "Applications" of container window to {495, 190}
+    close
+    open
+    update without registering applications
+    delay 1
+    close
+  end tell
+end tell
+APPLESCRIPT
+then
+  echo "warning: Finder layout failed (Automation permission?); shipping a plain disk image" >&2
+fi
+sync
+hdiutil detach "$MOUNT" -quiet
+hdiutil convert "$RW" -format UDZO -imagekey zlib-level=9 -ov -quiet -o "$DMG"
+rm -f "$RW"
 if [ -n "$DEVID" ]; then
   codesign --sign "$DEVID" --timestamp "$DMG"
   RESULT="$(xcrun notarytool submit "$DMG" --key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID" --wait 2>&1 | tee /dev/stderr)"
