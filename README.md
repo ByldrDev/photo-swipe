@@ -168,20 +168,19 @@ the dialog misleadingly says the app "is not supported on this Mac" (it is a uni
 Privacy & Security → **Open Anyway**, or `xattr -dr com.apple.quarantine`, gets past it once; the
 release notes explain this. Notarization removes the step entirely.
 
-Only the team's **Account Holder** can create a Developer ID certificate, and the App Store
-Connect API refuses it (403) even with an App Manager key, so it is a one-time manual step:
-a private key and CSR are already at `~/.appstoreconnect/signing/developer_id_application.{key,csr}`.
-Upload the CSR at developer.apple.com → Certificates → + → *Developer ID Application*,
-download the `.cer`, then:
+The **Developer ID Application** certificate (G2, expires 2031-09-09, created 2026-09-08) lives in
+the login keychain with its private key; backups of the key, CSR, `.cer` and `.p12` are in
+`~/.appstoreconnect/signing/`. Only the team's Account Holder can create one, and the App Store
+Connect API refuses (403) even with an App Manager key, so it was created in the developer portal
+(Certificates → + → Developer ID Application, upload the CSR); the `.cer` can then be fetched via
+`GET /v1/certificates/<id>` (`certificateContent`, base64 DER). To install it on another Mac:
 
 ```sh
 cd ~/.appstoreconnect/signing
-openssl x509 -inform der -in developer_id_application.cer -out developer_id_application.pem
-openssl pkcs12 -export -inkey developer_id_application.key -in developer_id_application.pem -out developer_id_application.p12
+openssl pkcs12 -export -inkey developer_id_application.key -in developer_id_application.pem \
+  -out developer_id_application.p12 -macalg sha1 -keypbe PBE-SHA1-3DES -certpbe PBE-SHA1-3DES   # legacy ciphers: the keychain rejects OpenSSL 3 defaults
 security import developer_id_application.p12 -k ~/Library/Keychains/login.keychain-db -T /usr/bin/codesign
 ```
-
-The next `release-mac.sh` run picks it up automatically.
 
 ## Not in v1
 
