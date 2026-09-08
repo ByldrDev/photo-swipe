@@ -41,8 +41,10 @@ fi
 
 xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipeMac -configuration Release \
   -destination 'platform=macOS' -derivedDataPath "$OUT/derived" \
-  CURRENT_PROJECT_VERSION="$BUILD_NUMBER" "${SIGN[@]}" \
+  CURRENT_PROJECT_VERSION="$BUILD_NUMBER" CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO "${SIGN[@]}" \
   build | xcbeautify_or_tail
+# CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO keeps get-task-allow (the debugger entitlement, which
+# notarization rejects) out of the release build.
 
 APP="$OUT/derived/Build/Products/Release/PhotoSwipe.app"
 ZIP="$OUT/PhotoSwipe-$VERSION-macOS.zip"
