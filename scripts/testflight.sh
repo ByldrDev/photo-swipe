@@ -48,7 +48,7 @@ sed -i '' -E "s/^([[:space:]]*MARKETING_VERSION:[[:space:]]*).*/\1\"$VERSION\"/"
 xcodegen generate >/dev/null
 git add project.yml PhotoSwipe.xcodeproj/project.pbxproj
 git commit -q -m "Bump version to $VERSION"
-git tag -f "v$VERSION" >/dev/null
+git tag -fa "v$VERSION" -m "PhotoSwipe $VERSION" >/dev/null
 
 AUTH=()
 if [ -n "${ASC_KEY_ID:-}" ]; then
