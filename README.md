@@ -142,6 +142,13 @@ xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipe \
   `addmedia` if it runs low.
 - The simulator library has no bursts and `addmedia` cannot create one, so the burst badge
   and per-frame deletion can only be checked on a real device.
+- Simulator builds of the iOS app share the Mac app's name and bundle id. If Spotlight indexes
+  DerivedData, Launch Services registers the iOS bundle too and Spotlight/Launchpad show a second
+  "PhotoSwipe" with a prohibitory icon that fails with "not supported on this Mac". Keep DerivedData
+  out of Spotlight by relocating it to a `.noindex` folder (macOS never indexes those):
+  `defaults write com.apple.dt.Xcode IDECustomDerivedDataLocation ~/Library/Developer/Xcode/DerivedData.noindex`.
+  To drop an already-registered stray copy: `lsregister -u <path-to.app>` (in
+  `/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/`).
 
 ## Running on a device
 
