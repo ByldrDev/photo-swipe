@@ -18,6 +18,8 @@ struct VideoControlsView: View {
                     .frame(width: 32, height: 32)
                     .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .keyboardShortcut(.space, modifiers: [])
             .disabled(!player.isReady)
             .accessibilityIdentifier("playPauseButton")
             .accessibilityLabel(player.isPlaying ? "Pause" : "Play")
@@ -38,6 +40,8 @@ struct VideoControlsView: View {
                     .frame(width: 32, height: 32)
                     .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .keyboardShortcut("m", modifiers: [])
             .accessibilityIdentifier("muteButton")
             .accessibilityLabel(player.isMuted ? "Unmute" : "Mute")
         }

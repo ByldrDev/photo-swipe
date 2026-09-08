@@ -15,7 +15,7 @@ struct ReviewView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         section(title: "To delete", ids: session.deleteIDs, verdict: .delete)
                         section(title: "To hide", ids: session.hideIDs, verdict: .hide)
-                        Text("Tap a photo to rescue it. iOS will ask you to confirm once for hiding and once for deleting. Deleted photos go to Recently Deleted for 30 days; hidden photos move to the Face ID-locked Hidden album.")
+                        Text("\(Platform.isMac ? "Click" : "Tap") a photo to rescue it. You'll be asked to confirm once for hiding and once for deleting. Deleted photos go to Recently Deleted for 30 days; hidden photos move to the Hidden album.")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                             .padding(.horizontal)
@@ -31,7 +31,7 @@ struct ReviewView: View {
             }
         }
         .navigationTitle("Review")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Done") { dismiss() }.accessibilityIdentifier("reviewDoneButton")

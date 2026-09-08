@@ -10,6 +10,8 @@ settings:
     SWIFT_VERSION: "5.0"
     DEVELOPMENT_TEAM: B89YM4B72X
     CODE_SIGN_STYLE: Automatic
+    # Shared by the iOS and macOS apps; scripts/testflight.sh bumps this.
+    MARKETING_VERSION: "1.0.1"
 targets:
   PhotoSwipe:
     type: application
@@ -35,7 +37,42 @@ targets:
         ENABLE_PREVIEWS: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CURRENT_PROJECT_VERSION: 1
-        MARKETING_VERSION: "1.0.1"
+  PhotoSwipeMac:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      # Shared code; the iOS asset catalog/Info.plist are replaced by Mac ones.
+      - path: PhotoSwipe
+        excludes:
+          - "Resources/**"
+      - PhotoSwipeMac
+    info:
+      path: PhotoSwipeMac/Info.plist
+      properties:
+        CFBundleDisplayName: PhotoSwipe
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSApplicationCategoryType: public.app-category.photography
+        NSPhotoLibraryUsageDescription: "PhotoSwipe shows your photos so you can decide which to keep, delete, or hide. Deletions and hiding only happen after you confirm them on the Review screen."
+        ITSAppUsesNonExemptEncryption: false
+    entitlements:
+      path: PhotoSwipeMac/PhotoSwipeMac.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.personal-information.photos-library: true
+        # iCloud Photos originals stream over the network.
+        com.apple.security.network.client: true
+    settings:
+      base:
+        # Same bundle id as iOS so both live under one App Store Connect record.
+        PRODUCT_BUNDLE_IDENTIFIER: com.ryancwynar.PhotoSwipe
+        PRODUCT_NAME: PhotoSwipe
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_PREVIEWS: YES
+        CURRENT_PROJECT_VERSION: 1
   PhotoSwipeTests:
     type: bundle.unit-test
     platform: iOS
@@ -60,6 +97,12 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: PhotoSwipe
 schemes:
+  PhotoSwipeMac:
+    build:
+      targets:
+        PhotoSwipeMac: all
+    run:
+      config: Debug
   PhotoSwipe:
     build:
       targets:

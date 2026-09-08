@@ -2,14 +2,18 @@ import SwiftUI
 
 /// The fullscreen deck. Right = keep, left = delete, up = hide.
 /// Pinch (or double-tap) zooms the current card; while zoomed, one-finger
-/// drags pan instead of swiping.
+/// drags pan instead of swiping, and tapping the left/right edge strips
+/// stands in for the swipe. The arrow keys, ⌘Z, space and M drive the same
+/// actions from a keyboard (the primary input on macOS).
 struct SwipeView: View {
     @Environment(AppModel.self) private var model
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.displayScale) private var displayScale
 
     @State private var offset: CGSize = .zero
     @State private var isAnimatingOut = false
     @State private var showReview = false
+    /// Size of the deck area, kept so the action buttons can fly the card out.
+    @State private var deckSize: CGSize = .zero
 
     // Zoom state for the current card. Reset whenever the card changes.
     @State private var zoomScale: CGFloat = 1
@@ -26,6 +30,8 @@ struct SwipeView: View {
     private let velocityThreshold: CGFloat = 900
     private let maxZoom: CGFloat = 6
     private let doubleTapZoom: CGFloat = 2.5
+    /// Width of the tap-to-decide strips shown along each edge while zoomed.
+    private let hotZoneWidth: CGFloat = 64
 
     private var isZoomed: Bool { zoomScale > 1.001 }
 
@@ -41,10 +47,14 @@ struct SwipeView: View {
                         deck(session: session, currentID: currentID, size: geo.size)
                     }
                 }
-                .onAppear { model.prefetch(targetSize: geo.size) }
+                .onAppear {
+                    deckSize = geo.size
+                    model.prefetch(targetSize: geo.size, scale: displayScale)
+                }
+                .onChange(of: geo.size) { _, size in deckSize = size }
                 .onChange(of: model.session?.currentID) { _, _ in
                     resetZoom(animated: false)
-                    model.prefetch(targetSize: geo.size)
+                    model.prefetch(targetSize: geo.size, scale: displayScale)
                 }
             }
             .ignoresSafeArea()
@@ -70,13 +80,15 @@ struct SwipeView: View {
                             .padding(.bottom, 14)
                     }
                     bottomBar
+                    if Platform.isMac { keyboardHints }
                 }
             }
             .padding()
         }
-        .statusBarHidden()
+        .hidesStatusBar()
         .sheet(isPresented: $showReview) {
             NavigationStack { ReviewView() }
+                .sheetFrame()
         }
     }
 
@@ -98,13 +110,14 @@ struct SwipeView: View {
         }
         .frame(width: size.width, height: size.height)
         .clipped()
+        .overlay(hotZones)
         .overlay(decisionOverlay)
         .contentShape(Rectangle())
         .offset(offset)
         .rotationEffect(.degrees(Double(offset.width / size.width) * 12), anchor: .bottom)
         .gesture(dragGesture(size: size))
         .simultaneousGesture(magnifyGesture(size: size))
-        .simultaneousGesture(doubleTapGesture(size: size))
+        .simultaneousGesture(tapGestures(size: size))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("swipeCard")
         .id(currentID)
@@ -143,6 +156,44 @@ struct SwipeView: View {
             }
             .allowsHitTesting(false)
         }
+    }
+
+    /// Edge strips that appear while zoomed: tap left to delete, right to keep.
+    /// Purely visual; the taps are handled by `tapGestures`.
+    private var hotZones: some View {
+        // Conditional (not opacity 0) so the strips leave the accessibility
+        // tree when not zoomed; the animation is scoped to this wrapper.
+        ZStack {
+            if isZoomed {
+                HStack {
+                    hotZone(.delete, edge: .leading)
+                    Spacer()
+                    hotZone(.keep, edge: .trailing)
+                }
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeOut(duration: 0.15), value: isZoomed)
+        .allowsHitTesting(false)
+    }
+
+    private func hotZone(_ verdict: SwipeDecision, edge: HorizontalEdge) -> some View {
+        LinearGradient(
+            colors: [verdict.color.opacity(0.45), verdict.color.opacity(0)],
+            startPoint: edge == .leading ? .leading : .trailing,
+            endPoint: edge == .leading ? .trailing : .leading
+        )
+        .frame(width: hotZoneWidth)
+        .overlay {
+            Image(systemName: verdict.systemImage)
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+                .padding(10)
+                .background(verdict.color.opacity(0.85), in: Circle())
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityIdentifier("\(verdict.rawValue)HotZone")
+        .accessibilityLabel("Tap to \(verdict.label.lowercased())")
     }
 
     // MARK: - Swipe / pan
@@ -245,8 +296,12 @@ struct SwipeView: View {
             }
     }
 
-    private func doubleTapGesture(size: CGSize) -> some Gesture {
-        SpatialTapGesture(count: 2)
+    /// Double-tap toggles zoom. A single tap does nothing unless zoomed, when a
+    /// tap inside the left/right edge strip decides delete/keep (the swipe is
+    /// busy panning). Double-tap takes precedence, so single taps land after
+    /// the double-tap window closes.
+    private func tapGestures(size: CGSize) -> some Gesture {
+        let doubleTap = SpatialTapGesture(count: 2)
             .onEnded { value in
                 guard !isAnimatingOut else { return }
                 if isZoomed {
@@ -260,6 +315,16 @@ struct SwipeView: View {
                     }
                 }
             }
+        let edgeTap = SpatialTapGesture(count: 1)
+            .onEnded { value in
+                guard isZoomed, !isAnimatingOut else { return }
+                if value.location.x < hotZoneWidth {
+                    flyOut(.delete, size: size)
+                } else if value.location.x > size.width - hotZoneWidth {
+                    flyOut(.keep, size: size)
+                }
+            }
+        return ExclusiveGesture(doubleTap, edgeTap)
     }
 
     private func resetZoom(animated: Bool) {
@@ -317,13 +382,16 @@ struct SwipeView: View {
     private var topBar: some View {
         HStack {
             Button {
-                dismiss()
+                // Also dismisses the iOS full-screen cover, which is bound to this flag.
+                model.isSwiping = false
             } label: {
                 Image(systemName: "chevron.down")
                     .font(.title3.weight(.semibold))
                     .padding(10)
                     .background(.black.opacity(0.5), in: Circle())
             }
+            .buttonStyle(.plain)
+            .keyboardShortcut(.escape, modifiers: [])
             .accessibilityIdentifier("closeButton")
             .accessibilityLabel("Close")
 
@@ -354,6 +422,8 @@ struct SwipeView: View {
                 .padding(10)
                 .background(.black.opacity(0.5), in: Capsule())
             }
+            .buttonStyle(.plain)
+            .keyboardShortcut("r", modifiers: .command)
             .accessibilityIdentifier("reviewButton")
             .accessibilityLabel("Review")
         }
@@ -386,6 +456,8 @@ struct SwipeView: View {
                     .frame(width: 52, height: 52)
                     .background(.black.opacity(0.5), in: Circle())
             }
+            .buttonStyle(.plain)
+            .keyboardShortcut("z", modifiers: .command)
             .disabled(!(model.session?.canUndo ?? false))
             .opacity((model.session?.canUndo ?? false) ? 1 : 0.35)
             .accessibilityIdentifier("undoButton")
@@ -403,15 +475,56 @@ struct SwipeView: View {
     private func actionButton(_ verdict: SwipeDecision) -> some View {
         Button {
             guard !isAnimatingOut else { return }
-            flyOut(verdict, size: UIScreen.main.bounds.size)
+            flyOut(verdict, size: deckSize)
         } label: {
             Image(systemName: verdict.systemImage)
                 .font(.title2.weight(.bold))
                 .frame(width: 56, height: 56)
                 .background(verdict.color.opacity(0.85), in: Circle())
         }
+        .buttonStyle(.plain)
+        .keyboardShortcut(Self.key(for: verdict), modifiers: [])
         .accessibilityIdentifier("\(verdict.rawValue)Button")
         .accessibilityLabel(verdict.label.capitalized)
+    }
+
+    private static func key(for verdict: SwipeDecision) -> KeyEquivalent {
+        switch verdict {
+        case .keep: return .rightArrow
+        case .delete: return .leftArrow
+        case .hide: return .upArrow
+        }
+    }
+
+    /// Shown under the buttons on macOS, where the keyboard is the main input.
+    private var keyboardHints: some View {
+        HStack(spacing: 14) {
+            hint("←", "delete")
+            hint("↑", "hide")
+            hint("→", "keep")
+            hint("⌘Z", "undo")
+            if let id = model.session?.currentID, model.library.isVideo(id) {
+                hint("space", "play/pause")
+                hint("M", "mute")
+            }
+            hint("double-click", "zoom")
+            hint("esc", "close")
+        }
+        .font(.caption)
+        .foregroundStyle(.white.opacity(0.8))
+        .padding(.horizontal, 12).padding(.vertical, 6)
+        .background(.black.opacity(0.45), in: Capsule())
+        .padding(.top, 10)
+    }
+
+    private func hint(_ key: String, _ action: String) -> some View {
+        HStack(spacing: 4) {
+            Text(key)
+                .font(.caption.weight(.semibold).monospaced())
+                .padding(.horizontal, 5).padding(.vertical, 1)
+                .background(.white.opacity(0.15), in: RoundedRectangle(cornerRadius: 4))
+            Text(action)
+        }
     }
 
     private func finished(session: SwipeSession) -> some View {

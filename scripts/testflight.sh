@@ -23,32 +23,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-# ---- Version bump -----------------------------------------------------------
-current_version() {
-  sed -nE 's/^[[:space:]]*MARKETING_VERSION:[[:space:]]*"?([0-9.]+)"?.*/\1/p' project.yml | head -1
-}
-
-next_patch() {
-  local IFS=. ; read -r major minor patch <<<"$1"
-  echo "${major:-1}.${minor:-0}.$(( ${patch:-0} + 1 ))"
-}
-
-CURRENT="$(current_version)"
-[ -n "$CURRENT" ] || { echo "could not read MARKETING_VERSION from project.yml" >&2; exit 1; }
-VERSION="${VERSION:-$(next_patch "$CURRENT")}"
-
-if [ "${ALLOW_DIRTY:-}" != "1" ] && [ -n "$(git status --porcelain)" ]; then
-  echo "working tree is dirty; commit or stash first (or ALLOW_DIRTY=1)" >&2
-  exit 1
-fi
-command -v xcodegen >/dev/null 2>&1 || { echo "xcodegen is required to regenerate the project (brew install xcodegen)" >&2; exit 1; }
-
-echo "==> Version $CURRENT -> $VERSION"
-sed -i '' -E "s/^([[:space:]]*MARKETING_VERSION:[[:space:]]*).*/\1\"$VERSION\"/" project.yml
-xcodegen generate >/dev/null
-git add project.yml PhotoSwipe.xcodeproj/project.pbxproj
-git commit -q -m "Bump version to $VERSION"
-git tag -fa "v$VERSION" -m "PhotoSwipe $VERSION" >/dev/null
+# ---- Version bump (shared) ---------------------------------------------------
+source scripts/bump-version.sh
 
 AUTH=()
 if [ -n "${ASC_KEY_ID:-}" ]; then

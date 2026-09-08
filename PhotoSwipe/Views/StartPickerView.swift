@@ -86,7 +86,7 @@ struct StartPickerView: View {
             .background(.bar)
         }
         .navigationTitle("Start from…")
-        .navigationBarTitleDisplayMode(.inline)
+        .inlineNavigationTitle()
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
         }

@@ -166,6 +166,7 @@ final class AssetVideoPlayer {
     /// sound and the ring/silent switch mutes it. Claim `.playback` only while
     /// the user has unmuted, so muted browsing keeps their music going.
     private func configureAudioSession(unmuted: Bool) {
+        #if os(iOS)
         let session = AVAudioSession.sharedInstance()
         do {
             if unmuted {
@@ -178,6 +179,7 @@ final class AssetVideoPlayer {
         } catch {
             // Audio session failures are non-fatal; video still plays.
         }
+        #endif
     }
 
     /// Scene-phase hooks: resume only if the user hasn't paused.

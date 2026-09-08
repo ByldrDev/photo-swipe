@@ -27,16 +27,15 @@ struct HomeView: View {
                 }
                 .padding()
             }
-            .background(Color(.systemBackground))
+            .background(Platform.background)
             .navigationTitle("PhotoSwipe")
-            .fullScreenCover(isPresented: $model.isSwiping) {
-                SwipeView().environment(model)
-            }
+            .swipeCover(isPresented: $model.isSwiping, model: model)
             .sheet(isPresented: $showStartPicker) {
                 NavigationStack {
                     StartPickerView { id in model.startSession(startID: id) }
                 }
                 .environment(model)
+                .sheetFrame()
             }
         }
     }
@@ -65,9 +64,7 @@ struct HomeView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             if model.library.authorizationStatus == .denied || model.library.authorizationStatus == .restricted {
-                Button("Open Settings") {
-                    if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
-                }
+                Button("Open Settings") { Platform.openPhotoSettings() }
                 .buttonStyle(.borderedProminent)
             } else {
                 Button("Allow Photo Access") { Task { await model.requestAccess() } }
@@ -163,6 +160,9 @@ struct HomeView: View {
             legendItem("arrow.right", "Keep", .keep)
             legendItem("arrow.left", "Delete", .delete)
             legendItem("arrow.up", "Hide", .hide)
+            if Platform.isMac {
+                Text("Arrow keys work too").foregroundStyle(.secondary)
+            }
         }
         .font(.caption)
         .padding(.top, 4)

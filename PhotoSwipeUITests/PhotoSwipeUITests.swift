@@ -86,6 +86,35 @@ final class PhotoSwipeUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["pendingCount"].exists, "no pending changes after undoing the delete")
     }
 
+    /// Double-tap zooms the card; while zoomed, taps on the edge strips decide.
+    func testZoomedEdgeTapsDecide() {
+        app.buttons["startButton"].tap()
+        let card = app.otherElements["swipeCard"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 5))
+        XCTAssertTrue(progress.hasPrefix("1 /"))
+
+        card.doubleTap()
+        XCTAssertTrue(app.descendants(matching: .any)["deleteHotZone"].waitForExistence(timeout: 2), "edge strips appear once zoomed")
+        saveScreenshot("zoomed")
+        // A swipe while zoomed pans; it must not decide.
+        card.swipeRight()
+        XCTAssertTrue(progress.hasPrefix("1 /"), "panning while zoomed should not advance")
+
+        card.coordinate(withNormalizedOffset: CGVector(dx: 0.04, dy: 0.5)).tap()   // left strip = delete
+        XCTAssertTrue(waitForProgress(prefix: "2 /"))
+        XCTAssertEqual(app.staticTexts["pendingCount"].label, "1")
+
+        card.doubleTap()
+        XCTAssertTrue(app.descendants(matching: .any)["keepHotZone"].waitForExistence(timeout: 2))
+        card.coordinate(withNormalizedOffset: CGVector(dx: 0.96, dy: 0.5)).tap()   // right strip = keep
+        XCTAssertTrue(waitForProgress(prefix: "3 /"))
+        XCTAssertEqual(app.staticTexts["pendingCount"].label, "1")
+        saveScreenshot("after-edge-keep")
+        let gone = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"),
+                                             object: app.descendants(matching: .any)["keepHotZone"])
+        XCTAssertEqual(XCTWaiter().wait(for: [gone], timeout: 2), .completed, "zoom resets on the next card")
+    }
+
     func testButtonsAndReviewRescue() {
         app.buttons["startButton"].tap()
         XCTAssertTrue(app.buttons["deleteButton"].waitForExistence(timeout: 5))

@@ -1,6 +1,6 @@
 # PhotoSwipe
 
-An iPhone app that does one thing well: rapid photo triage.
+An iPhone and Mac app that does one thing well: rapid photo triage.
 
 Enter **delete mode**, see one photo fullscreen at a time, and swipe:
 
@@ -21,7 +21,9 @@ playing video. A transport strip under the card has play/pause, a scrubber with 
 total time (drag pauses, release resumes), and the mute toggle.
 
 Pinch or double-tap any card to zoom in and inspect detail; while zoomed, one-finger drags
-pan instead of swiping, and double-tapping again (or pinching back) resets. The card fills
+pan instead of swiping, so red and green strips appear along the left and right edges: tap
+the left strip to delete, the right to keep, without zooming out first. Double-tapping again
+(or pinching back) resets. The card fills
 the screen and letterboxed photos sit on a blurred, darkened copy of themselves, so the next
 card in the stack never shows through.
 
@@ -35,17 +37,33 @@ the app never loses your delete list; Home offers **Resume** on the next launch.
 
 ![Home](screenshots/01-home.png) ![Swipe](screenshots/02-swipe.png) ![Review](screenshots/04-review.png)
 
+## macOS
+
+The same app runs on the Mac against the system Photos library, with the keyboard as the
+primary input: ← delete, ↑ hide, → keep, ⌘Z undo, space play/pause, M mute, double-click
+(or trackpad pinch) to zoom, esc to close the deck, ⌘R for Review. Mouse and trackpad
+swipes work too. Requires macOS 14.
+
+```sh
+xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipeMac -destination 'platform=macOS' build
+open ~/Library/Developer/Xcode/DerivedData/PhotoSwipe-*/Build/Products/Debug/PhotoSwipe.app
+```
+
+Releases are published on the GitHub Releases page by `scripts/release-mac.sh` (see
+[Releasing the Mac app](#releasing-the-mac-app)).
+
 ## Requirements
 
-- Xcode 26 (builds against iOS 17.0+; no iOS 26-only APIs are used)
+- Xcode 26 (builds against iOS 17.0+ and macOS 14.0+)
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) only if you change `project.yml`
   (`brew install xcodegen`, then `xcodegen generate`). The generated `.xcodeproj` is committed.
 
 ## Project layout
 
 ```
-PhotoSwipe/
-  App/          PhotoSwipeApp (entry), AppModel (wires session ↔ PhotoKit ↔ disk)
+PhotoSwipe/            shared by both apps
+  App/          PhotoSwipeApp (entry + RootView), AppModel (wires session ↔ PhotoKit ↔ disk),
+                Platform (the UIKit/AppKit seam: image type, haptics, presentation shims)
   Models/       SwipeSession — pure, testable engine: cursor, direction, decision log, undo
                 BurstInfo — groups burst frames and numbers them in capture order
   Services/     PhotoLibraryService (PhotoKit), AssetImageLoader, AssetVideoPlayer, SessionStore
@@ -53,9 +71,20 @@ PhotoSwipe/
                 ReviewView, AssetMediaView (image or inline video), AssetImageView (with
                 blurred backdrop), VideoControlsView (play/pause, scrubber, mute),
                 PlayerLayerView, Theme
+  Resources/    iOS asset catalog + Info.plist
+PhotoSwipeMac/         Mac-only: asset catalog (icon), Info.plist, entitlements (sandbox, Photos,
+                       network client for iCloud originals). No Mac-only Swift so far.
 PhotoSwipeTests/     unit tests for SwipeSession, SessionStore and BurstInfo
 PhotoSwipeUITests/   XCUITests that drive real swipes against the simulator library
 ```
+
+Both app targets compile the same `PhotoSwipe/` sources; `project.yml` gives the Mac target
+its own resources. Platform differences are confined to `Platform.swift` (`PlatformImage`,
+`Image(platformImage:)`, `Haptics`, `.swipeCover`/`.hidesStatusBar`/`.inlineNavigationTitle`
+no-op shims) plus `#if canImport(UIKit)` branches in `PlayerLayerView` and the iOS-only audio
+session code in `AssetVideoPlayer`. On iOS the deck is a full-screen cover; on macOS `RootView`
+swaps the window between Home and the deck, so closing the deck sets `model.isSwiping = false`
+on both platforms rather than calling `dismiss`.
 
 The deck keeps a sliding prefetch window warm: 20 assets ahead and 2 behind are decoded at
 screen size (and pulled from iCloud) via `PHCachingImageManager`, and released as they leave
@@ -109,6 +138,37 @@ xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipe \
 
 Open `PhotoSwipe.xcodeproj`, pick your iPhone, run. Signing is automatic with team
 `B89YM4B72X` (edit `project.yml` / the target's Signing tab for a different team).
+
+## Releasing the Mac app
+
+`scripts/release-mac.sh` bumps the version (shared `scripts/bump-version.sh`), builds a Release
+`PhotoSwipeMac`, zips it, pushes the tag and creates a GitHub release with the zip attached.
+
+```sh
+scripts/release-mac.sh                       # ad-hoc signed unless a Developer ID cert exists
+ASC_KEY_ID=2M8HBZGHA8 ASC_ISSUER_ID=7a62ff2d-f404-42b0-b11b-2a475a0c4ad3 scripts/release-mac.sh   # + notarize
+```
+
+**Signing.** Distribution outside the App Store needs a **Developer ID Application**
+certificate; if one is in the login keychain the script signs with it, notarizes via
+`notarytool` with the App Store Connect API key, and staples the ticket, so downloads open
+with no warning. Without one the build is ad-hoc signed and the first launch needs
+right-click → Open (or Privacy & Security → Open Anyway); the release notes explain this.
+
+Only the team's **Account Holder** can create a Developer ID certificate, and the App Store
+Connect API refuses it (403) even with an App Manager key, so it is a one-time manual step:
+a private key and CSR are already at `~/.appstoreconnect/signing/developer_id_application.{key,csr}`.
+Upload the CSR at developer.apple.com → Certificates → + → *Developer ID Application*,
+download the `.cer`, then:
+
+```sh
+cd ~/.appstoreconnect/signing
+openssl x509 -inform der -in developer_id_application.cer -out developer_id_application.pem
+openssl pkcs12 -export -inkey developer_id_application.key -in developer_id_application.pem -out developer_id_application.p12
+security import developer_id_application.p12 -k ~/Library/Keychains/login.keychain-db -T /usr/bin/codesign
+```
+
+The next `release-mac.sh` run picks it up automatically.
 
 ## Not in v1
 

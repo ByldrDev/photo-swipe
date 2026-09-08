@@ -1,7 +1,6 @@
 import Foundation
 import Photos
 import AVFoundation
-import UIKit
 import Observation
 
 /// Result of a batched commit to the photo library.
@@ -141,7 +140,7 @@ final class PhotoLibraryService: NSObject {
     func requestImage(for id: String,
                       targetSize: CGSize,
                       contentMode: PHImageContentMode = .aspectFit,
-                      handler: @escaping (UIImage?, Bool) -> Void) -> PHImageRequestID? {
+                      handler: @escaping (PlatformImage?, Bool) -> Void) -> PHImageRequestID? {
         guard let asset = assetsByID[id] else {
             handler(nil, false)
             return nil

@@ -14,6 +14,7 @@ struct AssetImageView: View {
     var showsBackdrop = false
 
     @State private var loader: AssetImageLoader?
+    @Environment(\.displayScale) private var displayScale
 
     var body: some View {
         ZStack {
@@ -21,7 +22,7 @@ struct AssetImageView: View {
                 if showsBackdrop {
                     backdrop(image)
                 }
-                Image(uiImage: image)
+                Image(platformImage: image)
                     .resizable()
                     .aspectRatio(contentMode: contentMode)
                     .transition(.opacity)
@@ -53,8 +54,8 @@ struct AssetImageView: View {
 
     /// Scaled up past the edges so the blur has no transparent fringe, then
     /// clipped by the parent ZStack.
-    private func backdrop(_ image: UIImage) -> some View {
-        Image(uiImage: image)
+    private func backdrop(_ image: PlatformImage) -> some View {
+        Image(platformImage: image)
             .resizable()
             .aspectRatio(contentMode: .fill)
             .frame(width: targetSize.width, height: targetSize.height)
@@ -68,8 +69,7 @@ struct AssetImageView: View {
 
     private func load() {
         if loader == nil { loader = AssetImageLoader(library: model.library) }
-        let scale = UIScreen.main.scale
-        loader?.load(id: assetID, targetSize: CGSize(width: targetSize.width * scale, height: targetSize.height * scale))
+        loader?.load(id: assetID, targetSize: CGSize(width: targetSize.width * displayScale, height: targetSize.height * displayScale))
     }
 
     private func durationText(_ seconds: TimeInterval) -> String {

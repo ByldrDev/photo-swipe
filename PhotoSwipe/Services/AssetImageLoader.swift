@@ -1,6 +1,5 @@
 import Foundation
 import Photos
-import UIKit
 import Observation
 
 /// Loads (and re-loads on id change) a single asset image through the service,
@@ -8,7 +7,7 @@ import Observation
 @MainActor
 @Observable
 final class AssetImageLoader {
-    private(set) var image: UIImage?
+    private(set) var image: PlatformImage?
     private(set) var isDegraded = true
     private(set) var loadedID: String?
 

@@ -27,6 +27,7 @@ extension SwipeDecision {
 }
 
 enum Haptics {
+    #if canImport(UIKit)
     static func decision(_ verdict: SwipeDecision) {
         let style: UIImpactFeedbackGenerator.FeedbackStyle = verdict == .delete ? .heavy : .medium
         UIImpactFeedbackGenerator(style: style).impactOccurred()
@@ -39,4 +40,18 @@ enum Haptics {
     static func success() {
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
+    #else
+    // Force Touch trackpads only; a no-op elsewhere.
+    static func decision(_ verdict: SwipeDecision) {
+        NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .now)
+    }
+
+    static func light() {
+        NSHapticFeedbackManager.defaultPerformer.perform(.alignment, performanceTime: .now)
+    }
+
+    static func success() {
+        NSHapticFeedbackManager.defaultPerformer.perform(.levelChange, performanceTime: .now)
+    }
+    #endif
 }

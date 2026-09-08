@@ -1,6 +1,5 @@
 import Foundation
 import SwiftUI
-import UIKit
 import Observation
 
 /// Owns the one in-progress session and wires the pure `SwipeSession` model to
@@ -110,9 +109,9 @@ final class AppModel {
     static let prefetchBehind = 2
 
     /// Warm the image cache for what comes next (and keep undo targets warm).
-    func prefetch(targetSize: CGSize) {
+    /// `scale` is the display's backing scale (SwiftUI's `displayScale`).
+    func prefetch(targetSize: CGSize, scale: CGFloat) {
         guard let session else { return }
-        let scale = UIScreen.main.scale
         let pixelSize = CGSize(width: targetSize.width * scale, height: targetSize.height * scale)
         library.updateCacheWindow(
             ids: session.neighborIDs(ahead: Self.prefetchAhead, behind: Self.prefetchBehind),
