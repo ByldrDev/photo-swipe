@@ -10,11 +10,45 @@
 #   2. Otherwise the Apple ID signed in to Xcode (Settings > Accounts) is used via
 #      -allowProvisioningUpdates. If Xcode's session has expired, sign in there again.
 #
+# Versioning: every run bumps the patch component of MARKETING_VERSION in project.yml
+# (1.0 -> 1.0.1 -> 1.0.2 ...), regenerates the .xcodeproj, and commits + tags the bump
+# (v1.0.1) so the next run continues from there. The commit is NOT pushed; push when
+# convenient. Requires a clean working tree so the bump commit contains only the bump.
+#
 # Optional:
+#   VERSION         sets MARKETING_VERSION explicitly (e.g. 1.1 or 2.0.0) instead of bumping
 #   BUILD_NUMBER    overrides CURRENT_PROJECT_VERSION (defaults to the UTC timestamp,
 #                   which is always increasing so uploads never collide)
+#   ALLOW_DIRTY=1   bump even with uncommitted changes (they stay out of the bump commit)
 set -euo pipefail
 cd "$(dirname "$0")/.."
+
+# ---- Version bump -----------------------------------------------------------
+current_version() {
+  sed -nE 's/^[[:space:]]*MARKETING_VERSION:[[:space:]]*"?([0-9.]+)"?.*/\1/p' project.yml | head -1
+}
+
+next_patch() {
+  local IFS=. ; read -r major minor patch <<<"$1"
+  echo "${major:-1}.${minor:-0}.$(( ${patch:-0} + 1 ))"
+}
+
+CURRENT="$(current_version)"
+[ -n "$CURRENT" ] || { echo "could not read MARKETING_VERSION from project.yml" >&2; exit 1; }
+VERSION="${VERSION:-$(next_patch "$CURRENT")}"
+
+if [ "${ALLOW_DIRTY:-}" != "1" ] && [ -n "$(git status --porcelain)" ]; then
+  echo "working tree is dirty; commit or stash first (or ALLOW_DIRTY=1)" >&2
+  exit 1
+fi
+command -v xcodegen >/dev/null 2>&1 || { echo "xcodegen is required to regenerate the project (brew install xcodegen)" >&2; exit 1; }
+
+echo "==> Version $CURRENT -> $VERSION"
+sed -i '' -E "s/^([[:space:]]*MARKETING_VERSION:[[:space:]]*).*/\1\"$VERSION\"/" project.yml
+xcodegen generate >/dev/null
+git add project.yml PhotoSwipe.xcodeproj/project.pbxproj
+git commit -q -m "Bump version to $VERSION"
+git tag -f "v$VERSION" >/dev/null
 
 AUTH=()
 if [ -n "${ASC_KEY_ID:-}" ]; then
@@ -35,7 +69,7 @@ xcbeautify_or_tail() {
   if command -v xcbeautify >/dev/null 2>&1; then xcbeautify; else grep -E "error|warning: |ARCHIVE|EXPORT|Upload" || true; fi
 }
 
-echo "==> Archiving build $BUILD_NUMBER"
+echo "==> Archiving $VERSION ($BUILD_NUMBER)"
 xcodebuild -project PhotoSwipe.xcodeproj -scheme PhotoSwipe -configuration Release \
   -destination 'generic/platform=iOS' -archivePath "$ARCHIVE" \
   -allowProvisioningUpdates -allowProvisioningDeviceRegistration ${AUTH[@]+"${AUTH[@]}"} \
@@ -47,4 +81,5 @@ xcodebuild -exportArchive -archivePath "$ARCHIVE" -exportPath "$OUT/export" \
   -exportOptionsPlist scripts/ExportOptions.plist \
   -allowProvisioningUpdates ${AUTH[@]+"${AUTH[@]}"} | xcbeautify_or_tail
 
-echo "==> Uploaded build $BUILD_NUMBER. Processing takes 5-15 minutes before it appears in TestFlight."
+echo "==> Uploaded $VERSION ($BUILD_NUMBER). Processing takes 5-15 minutes before it appears in TestFlight."
+echo "    Version bump committed and tagged v$VERSION; run 'git push --follow-tags' to publish it."

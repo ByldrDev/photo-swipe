@@ -124,9 +124,15 @@ ASC_KEY_ID=2M8HBZGHA8 ASC_ISSUER_ID=7a62ff2d-f404-42b0-b11b-2a475a0c4ad3 scripts
 
 Auth: an App Store Connect API key (Team key, App Manager role) read from
 `~/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8`; without `ASC_KEY_ID` the script falls
-back to the Apple ID signed in to Xcode. The build number defaults to a UTC timestamp so
-uploads never collide. `ITSAppUsesNonExemptEncryption` is false, so builds skip the
-export-compliance prompt.
+back to the Apple ID signed in to Xcode. `ITSAppUsesNonExemptEncryption` is false, so builds
+skip the export-compliance prompt.
+
+**Versioning.** Every run bumps the patch component of `MARKETING_VERSION` in `project.yml`
+(1.0 → 1.0.1 → 1.0.2 …), regenerates the `.xcodeproj`, and commits + tags the bump
+(`v1.0.1`) before archiving, so the version shown in TestFlight moves with each build. The
+bump commit is not pushed; run `git push --follow-tags` afterwards. The working tree must be
+clean (or set `ALLOW_DIRTY=1`). Set `VERSION=1.1` to jump the major/minor instead of bumping.
+The build number (`CURRENT_PROJECT_VERSION`) is still a UTC timestamp so uploads never collide.
 
 **Signing is manual for the upload step.** Xcode 26's automatic distribution signing asks
 Apple for a cloud-managed certificate (`DISTRIBUTION_MANAGED`), which this team's portal
