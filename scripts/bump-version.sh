@@ -26,9 +26,15 @@ if [ "${ALLOW_DIRTY:-}" != "1" ] && [ -n "$(git status --porcelain)" ]; then
 fi
 command -v xcodegen >/dev/null 2>&1 || { echo "xcodegen is required to regenerate the project (brew install xcodegen)" >&2; exit 1; }
 
-echo "==> Version $CURRENT -> $VERSION"
-sed -i '' -E "s/^([[:space:]]*MARKETING_VERSION:[[:space:]]*).*/\1\"$VERSION\"/" project.yml
-xcodegen generate >/dev/null
-git add project.yml PhotoSwipe.xcodeproj/project.pbxproj
-git commit -q -m "Bump version to $VERSION"
+if [ "$VERSION" = "$CURRENT" ]; then
+  # VERSION=<current> re-runs a release for a version that was already bumped
+  # (e.g. after a failed upload) without creating another commit.
+  echo "==> Version $VERSION (already current, not bumping)"
+else
+  echo "==> Version $CURRENT -> $VERSION"
+  sed -i '' -E "s/^([[:space:]]*MARKETING_VERSION:[[:space:]]*).*/\1\"$VERSION\"/" project.yml
+  xcodegen generate >/dev/null
+  git add project.yml PhotoSwipe.xcodeproj/project.pbxproj
+  git commit -q -m "Bump version to $VERSION"
+fi
 git tag -fa "v$VERSION" -m "PhotoSwipe $VERSION" >/dev/null

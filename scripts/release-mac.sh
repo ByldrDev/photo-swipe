@@ -28,7 +28,8 @@ xcbeautify_or_tail() {
   if command -v xcbeautify >/dev/null 2>&1; then xcbeautify; else grep -E "error|warning: |BUILD" || true; fi
 }
 
-DEVID="$(security find-identity -v -p codesigning 2>/dev/null | grep -o '"Developer ID Application: [^"]*"' | head -1 | tr -d '"')"
+# `|| true`: under pipefail a no-match grep would otherwise abort the script.
+DEVID="$(security find-identity -v -p codesigning 2>/dev/null | { grep -o '"Developer ID Application: [^"]*"' || true; } | head -1 | tr -d '"')"
 if [ -n "$DEVID" ]; then
   echo "==> Building $VERSION ($BUILD_NUMBER) signed with: $DEVID"
   SIGN=(CODE_SIGN_STYLE=Manual "CODE_SIGN_IDENTITY=$DEVID" OTHER_CODE_SIGN_FLAGS=--timestamp PROVISIONING_PROFILE_SPECIFIER=)
