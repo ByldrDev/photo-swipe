@@ -1,5 +1,7 @@
 # PhotoSwipe
 
+**[Download on the App Store](https://apps.apple.com/us/app/photoswipe-keep-or-delete/id6809222601)**
+
 An iPhone and Mac app that does one thing well: rapid photo triage.
 
 Enter **delete mode**, see one photo fullscreen at a time, and swipe:
